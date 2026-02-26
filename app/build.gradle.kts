@@ -10,11 +10,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.game2048"
+    namespace = "dev.game2048.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.game2048"
+        applicationId = "dev.game2048.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -28,6 +28,10 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     compileOptions {

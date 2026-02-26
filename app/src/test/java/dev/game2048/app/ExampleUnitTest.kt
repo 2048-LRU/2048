@@ -1,4 +1,4 @@
-package com.example.game2048
+package dev.game2048.app
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test

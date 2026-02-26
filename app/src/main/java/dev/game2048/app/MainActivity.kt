@@ -1,4 +1,4 @@
-package com.example.game2048
+package dev.game2048.app
 
 import android.graphics.Typeface
 import android.os.Bundle
@@ -8,26 +8,29 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import dev.game2048.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     //  used later to do the calculations
     private lateinit var board: Array<Array<Int>>
 
     // used for the tiles displaying
     private lateinit var tiles: Array<Array<TextView>>
-    private lateinit var grid: GridLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        grid = findViewById(R.id.grid)
         createGrid(4)
     }
 
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             Array(dims) { row ->
                 Array(dims) { col ->
                     val tile = createTile(row, col)
-                    grid.addView(tile)
+                    binding.grid.addView(tile)
                     tile
                 }
             }
