@@ -1,10 +1,6 @@
 package dev.game2048.app
 
-import android.graphics.Typeface
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.GridLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,11 +9,10 @@ import dev.game2048.app.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    //  used later to do the calculations
-    private lateinit var board: Array<Array<Int>>
+    private lateinit var gameEngine: GameEngine
 
     // used for the tiles displaying
-    private lateinit var tiles: Array<Array<TextView>>
+    private lateinit var tiles: Array<Array<TileView>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +26,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        gameEngine = GameEngine(4)
         createGrid(4)
+        gameEngine.startGame()
+        updateUI()
     }
 
     private fun createGrid(dims: Int) {
@@ -45,24 +43,20 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun createTile(row: Int, col: Int): TextView {
-        val tile = TextView(this)
-
-        val params =
-            GridLayout.LayoutParams().apply {
-                width = 0
-                height = 0
-                rowSpec = GridLayout.spec(row, 1f)
-                columnSpec = GridLayout.spec(col, 1f)
-                setMargins(8, 8, 8, 8)
-            }
-
-        tile.layoutParams = params
-        tile.gravity = Gravity.CENTER
-        tile.textSize = 24f
-        tile.setTypeface(null, Typeface.BOLD)
-        tile.setBackgroundResource(R.drawable.tile_background)
-
+    private fun createTile(row: Int, col: Int): TileView {
+        val tile = TileView(this)
+        tile.setGridPosition(row, col)
         return tile
+    }
+
+    private fun updateUI() {
+        val currentBoard = gameEngine.board
+
+        for (row in currentBoard.indices) {
+            for (col in currentBoard[row].indices) {
+                val value = currentBoard[row][col]
+                tiles[row][col].setValue(value)
+            }
+        }
     }
 }

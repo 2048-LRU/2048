@@ -5,4 +5,20 @@
     <color name="grid_bg">#FFAD9D8F</color>
     <color name="tile_bg">#99C1B3A4</color>
     <color name="game_title">#FF5C534B</color>
+
+    <color name="tile_2">#FFEEE4DA</color>
+    <color name="tile_4">#FFEDE0C8</color>
+    <color name="tile_8">#FFF2B179</color>
+    <color name="tile_16">#FFF59563</color>
+    <color name="tile_32">#FFF67C5F</color>
+    <color name="tile_64">#FFF65E3B</color>
+    <color name="tile_128">#FFEDCF72</color>
+    <color name="tile_256">#FFEDCC61</color>
+    <color name="tile_512">#FFEDC850</color>
+    <color name="tile_1024">#FFEDC53F</color>
+    <color name="tile_2048">#FFEDC22E</color>
+    <color name="tile_super">#FF3C3A32</color>
+
+    <color name="text_dark">#776E65</color>
+    <color name="text_light">#F9F6F2</color>
 </resources>
