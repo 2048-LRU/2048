@@ -1,61 +1,25 @@
 package dev.game2048.app
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import dev.game2048.app.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import dev.game2048.app.ui.screens.GameScreen
+import dev.game2048.app.ui.theme.Game2048Theme
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-
-    private lateinit var gameEngine: GameEngine
-
-    // used for the tiles displaying
-    private lateinit var tiles: Array<Array<TileView>>
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        gameEngine = GameEngine(4)
-        createGrid(4)
-        gameEngine.startGame()
-        updateUI()
-    }
-
-    private fun createGrid(dims: Int) {
-        tiles =
-            Array(dims) { row ->
-                Array(dims) { col ->
-                    val tile = createTile(row, col)
-                    binding.grid.addView(tile)
-                    tile
+        enableEdgeToEdge()
+        setContent {
+            Game2048Theme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    GameScreen(modifier = Modifier.padding(innerPadding))
                 }
-            }
-    }
-
-    private fun createTile(row: Int, col: Int): TileView {
-        val tile = TileView(this)
-        tile.setGridPosition(row, col)
-        return tile
-    }
-
-    private fun updateUI() {
-        val currentBoard = gameEngine.board
-
-        for (row in currentBoard.indices) {
-            for (col in currentBoard[row].indices) {
-                val value = currentBoard[row][col]
-                tiles[row][col].setValue(value)
             }
         }
     }
