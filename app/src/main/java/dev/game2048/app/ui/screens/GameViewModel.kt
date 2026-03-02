@@ -18,6 +18,9 @@ class GameViewModel : ViewModel() {
     private val _isGameOver = MutableStateFlow(false)
     val isGameOver: StateFlow<Boolean> = _isGameOver.asStateFlow()
 
+    private val _hasWon = MutableStateFlow(false)
+    val hasWon: StateFlow<Boolean> = _hasWon.asStateFlow()
+
     private val _board = MutableStateFlow(emptyBoard())
     val board: StateFlow<List<List<Int>>> = _board.asStateFlow()
 
@@ -36,6 +39,11 @@ class GameViewModel : ViewModel() {
 
             if (engine.move(direction)) {
                 _board.value = engine.board()
+
+                if (engine.win) {
+                    _hasWon.value = true
+                }
+
                 delay(80)
 
                 engine.spawnRandomTile()
@@ -43,6 +51,7 @@ class GameViewModel : ViewModel() {
 
                 if (engine.isGameOver()) {
                     _isGameOver.value = true
+                } else if (engine.win) {
                 }
             }
             isMoving = false

@@ -7,11 +7,13 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
 
     private var grid: Array<IntArray> = Array(size) { IntArray(size) }
     private val emptyCells = mutableListOf<Pair<Int, Int>>()
+    var win: Boolean = false
 
     /** Returns a mutable snapshot of the current board. */
     fun board(): List<List<Int>> = grid.map { it.toList() }
 
     fun startGame() {
+        win = false
         grid.forEach { row -> row.fill(0) }
 
         emptyCells.clear()
@@ -74,6 +76,9 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
         while (i < row.size) {
             if (i < row.lastIndex && row[i] == row[i + 1]) {
                 result.add(row[i] * 2)
+                if (row[i] * 2 == 16) {
+                    win = true
+                }
                 i += 2
             } else {
                 result.add(row[i])

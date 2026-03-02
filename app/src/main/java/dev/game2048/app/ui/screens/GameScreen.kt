@@ -20,12 +20,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.theme.GameTitle
+import dev.game2048.app.ui.theme.TextLight
+import dev.game2048.app.ui.theme.Tile2048
 
 @Suppress("FunctionNaming")
 @Composable
 fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewModel()) {
     val board by viewModel.board.collectAsState()
     val isGameOver by viewModel.isGameOver.collectAsState()
+    val hasWon by viewModel.hasWon.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -47,15 +50,23 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewMod
             onMove = { direction -> viewModel.onMove(direction) }
         )
 
-        if (isGameOver) {
+        if (isGameOver || hasWon) {
+            val text = if (hasWon) "YOU WIN!" else "GAME OVER"
+
+            val backgroundColor = if (hasWon) {
+                Tile2048.copy(alpha = 0.5f)
+            } else {
+                Color.Black.copy(alpha = 0.4f)
+            }
+
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = Color.Black.copy(alpha = 0.4f)
+                color = backgroundColor
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = "GAME OVER",
-                        color = Color.White,
+                        text = text,
+                        color = TextLight,
                         fontSize = 48.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
