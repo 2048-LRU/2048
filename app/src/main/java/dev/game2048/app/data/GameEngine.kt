@@ -39,13 +39,13 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
         }
 
         // if the grid has changed, update it and spawn a new tile
-        val hasChanged: Boolean = newGrid.contentDeepEquals(grid)
-        if (!hasChanged) {
+        val hasChanged: Boolean = !newGrid.contentDeepEquals(grid)
+        if (hasChanged) {
             grid = newGrid
             spawnRandomTile()
         }
 
-        return !hasChanged
+        return hasChanged
     }
 
     private fun fillZ(row: List<Int>) = (row + List(size - row.size) { 0 })
