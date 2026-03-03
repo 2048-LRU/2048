@@ -11,9 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.game2048.app.data.models.Direction
+import dev.game2048.app.domain.models.Direction
 import dev.game2048.app.ui.modifiers.onSwipe
+import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.GridBackground
 
 @Composable
@@ -37,5 +39,26 @@ fun GameGrid(board: List<List<Int>>, modifier: Modifier = Modifier, onMove: (Dir
                 for (value in row) TileCell(value = value, modifier = Modifier.weight(1f))
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GameGridPreview() {
+    val sampleBoard = listOf(
+        listOf(2, 4, 8, 16),
+        listOf(32, 64, 128, 256),
+        listOf(512, 1024, 2048, 0),
+        listOf(0, 2, 0, 4)
+    )
+
+    Game2048Theme {
+        GameGrid(
+            board = sampleBoard,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            onMove = {}
+        )
     }
 }

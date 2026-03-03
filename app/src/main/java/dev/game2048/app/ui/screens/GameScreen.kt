@@ -13,12 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.game2048.app.data.models.GameState
+import dev.game2048.app.domain.models.GameState
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameOverlay
+import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.viewmodel.GameViewModel
 
@@ -26,6 +28,7 @@ import dev.game2048.app.viewmodel.GameViewModel
 fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewModel()) {
     val board by viewModel.board.collectAsState()
     val state by viewModel.state.collectAsState()
+    val score by viewModel.score.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -37,6 +40,13 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewMod
                 text = "2048",
                 fontSize = 64.sp,
                 fontWeight = FontWeight.Bold,
+                color = GameTitle
+            )
+
+            Text(
+                text = "Score: $score",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = GameTitle
             )
 
@@ -55,5 +65,13 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewMod
                 onRestart = viewModel::restart
             )
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun GameScreenPreview() {
+    Game2048Theme {
+        GameScreen()
     }
 }

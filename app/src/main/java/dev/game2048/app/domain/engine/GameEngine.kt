@@ -1,23 +1,27 @@
-package dev.game2048.app.data.sources
+package dev.game2048.app.domain.engine
 
-import dev.game2048.app.data.models.Direction
+import dev.game2048.app.domain.models.Direction
+import dev.game2048.app.utils.GameConstants
 import kotlin.random.Random
 
-class GameEngine(private val size: Int = DEFAULT_SIZE) {
+class GameEngine(private val size: Int = GameConstants.GRID_SIZE) {
 
     private var grid: Array<IntArray> = Array(size) { IntArray(size) }
     private val emptyCells = mutableListOf<Pair<Int, Int>>()
     var hasWon: Boolean = false
+        private set
+    var score: Int = 0
         private set
 
     val board: List<List<Int>> get() = grid.map { it.toList() }
 
     fun startGame() {
         hasWon = false
+        score = 0
         grid.forEach { row -> row.fill(0) }
 
         refreshEmptyCells()
-        repeat(INITIAL_TILES) { spawnRandomTile() }
+        repeat(GameConstants.INITIAL_TILES) { spawnRandomTile() }
     }
 
     fun isGameOver(): Boolean {
@@ -30,7 +34,7 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
         if (emptyCells.isEmpty()) return
 
         val (row, col) = emptyCells.removeAt(Random.nextInt(emptyCells.size))
-        grid[row][col] = if (Random.nextFloat() < CHANCE_OF_TWO) 2 else 4
+        grid[row][col] = if (Random.nextFloat() < GameConstants.CHANCE_OF_TWO) 2 else 4
     }
 
     fun move(direction: Direction): Boolean {
@@ -83,7 +87,8 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
             if (i < row.lastIndex && row[i] == row[i + 1]) {
                 val merged = row[i] * 2
                 result.add(merged)
-                if (merged == WIN_VALUE) hasWon = true
+                score += merged
+                if (merged == GameConstants.WIN_VALUE) hasWon = true
                 i += 2
             } else {
                 result.add(row[i])
@@ -95,11 +100,4 @@ class GameEngine(private val size: Int = DEFAULT_SIZE) {
     }
 
     private fun transpose(g: Array<IntArray>): Array<IntArray> = Array(size) { i -> IntArray(size) { j -> g[j][i] } }
-
-    private companion object {
-        const val DEFAULT_SIZE = 4
-        const val INITIAL_TILES = 2
-        const val CHANCE_OF_TWO = 0.9f
-        const val WIN_VALUE = 2048
-    }
 }

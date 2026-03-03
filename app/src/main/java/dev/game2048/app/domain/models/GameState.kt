@@ -1,4 +1,4 @@
-package dev.game2048.app.data.models
+package dev.game2048.app.domain.models
 
 sealed interface GameState {
     data object Playing : GameState

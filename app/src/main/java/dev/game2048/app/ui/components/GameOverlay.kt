@@ -14,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.game2048.app.data.models.GameState
+import dev.game2048.app.domain.models.GameState
+import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.ui.theme.TextLight
 import dev.game2048.app.ui.theme.Tile2048
@@ -57,5 +59,21 @@ fun GameOverlay(state: GameState, onRestart: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Game Over")
+@Composable
+private fun GameOverlayGameOverPreview() {
+    Game2048Theme {
+        GameOverlay(state = GameState.Over, onRestart = {})
+    }
+}
+
+@Preview(showBackground = true, name = "Win")
+@Composable
+private fun GameOverlayWinPreview() {
+    Game2048Theme {
+        GameOverlay(state = GameState.Won, onRestart = {})
     }
 }

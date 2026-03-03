@@ -1,3 +1,3 @@
-package dev.game2048.app.data.models
+package dev.game2048.app.domain.models
 
 enum class Direction { UP, DOWN, LEFT, RIGHT }

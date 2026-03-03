@@ -2,9 +2,10 @@ package dev.game2048.app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.game2048.app.data.models.Direction
-import dev.game2048.app.data.models.GameState
-import dev.game2048.app.data.sources.GameEngine
+import dev.game2048.app.domain.engine.GameEngine
+import dev.game2048.app.domain.models.Direction
+import dev.game2048.app.domain.models.GameState
+import dev.game2048.app.utils.GameConstants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,11 +17,14 @@ class GameViewModel : ViewModel() {
     private val engine = GameEngine()
     private var isMoving = false
 
+    private val _board = MutableStateFlow(emptyBoard())
+    val board: StateFlow<List<List<Int>>> = _board.asStateFlow()
+
     private val _state = MutableStateFlow<GameState>(GameState.Playing)
     val state: StateFlow<GameState> = _state.asStateFlow()
 
-    private val _board = MutableStateFlow(emptyBoard())
-    val board: StateFlow<List<List<Int>>> = _board.asStateFlow()
+    private val _score = MutableStateFlow(0)
+    val score: StateFlow<Int> = _score.asStateFlow()
 
     init {
         restart()
@@ -30,6 +34,7 @@ class GameViewModel : ViewModel() {
         engine.startGame()
         _board.value = engine.board
         _state.value = GameState.Playing
+        _score.value = 0
         isMoving = false
     }
 
@@ -42,10 +47,11 @@ class GameViewModel : ViewModel() {
             if (engine.move(direction)) {
                 _board.value = engine.board
 
-                delay(SPAWN_DELAY_MS)
+                delay(GameConstants.SPAWN_DELAY_MS)
 
                 engine.spawnRandomTile()
                 _board.value = engine.board
+                _score.value = engine.score
 
                 _state.value = when {
                     engine.hasWon -> GameState.Won
@@ -58,10 +64,5 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private companion object {
-        const val GRID_SIZE = 4
-        const val SPAWN_DELAY_MS = 80L
-
-        fun emptyBoard(): List<List<Int>> = List(GRID_SIZE) { List(GRID_SIZE) { 0 } }
-    }
+    private fun emptyBoard(): List<List<Int>> = List(GameConstants.GRID_SIZE) { List(GameConstants.GRID_SIZE) { 0 } }
 }
