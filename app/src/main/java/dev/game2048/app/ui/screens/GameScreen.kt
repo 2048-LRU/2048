@@ -1,14 +1,7 @@
 package dev.game2048.app.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +11,8 @@ import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
+import dev.game2048.app.ui.components.MenuButton
+import dev.game2048.app.ui.components.SettingsDialog
 import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.viewmodel.GameViewModel
 
@@ -29,14 +24,10 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewMod
     val score by viewModel.score.collectAsState()
     val bestScore by viewModel.bestScore.collectAsState()
 
+    var showSettings by remember { mutableStateOf(false) }
+
     Box(modifier = modifier.fillMaxSize()) {
-        if (state == GameState.Over || (state == GameState.Won && !keptPlaying)) {
-            GameOverlay(
-                state = state,
-                onRestart = viewModel::restart,
-                onKeepPlaying = viewModel::keepPlaying
-            )
-        }
+        MenuButton(onClick = { showSettings = true })
 
         Column(
             modifier = Modifier
@@ -55,6 +46,26 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = viewMod
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 onMove = viewModel::move
+            )
+        }
+
+        SettingsDialog(
+            showDialog = showSettings,
+            onDismiss = { showSettings = false },
+            onNavigateToSettings = {
+                showSettings = false
+            },
+            onChangeGridSize = { newSize ->
+                viewModel.restart(newSize)
+                showSettings = false
+            }
+        )
+
+        if (state == GameState.Over || (state == GameState.Won && !keptPlaying)) {
+            GameOverlay(
+                state = state,
+                onRestart = viewModel::restart,
+                onKeepPlaying = viewModel::keepPlaying
             )
         }
     }

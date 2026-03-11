@@ -19,8 +19,9 @@ import kotlinx.serialization.json.Json
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val dbHelper = DatabaseHelper(application)
+    private var currentGridSize = GameConstants.GRID_SIZE
 
-    private val engine = GameEngine()
+    private var engine = GameEngine(currentGridSize)
     private var isMoving = false
 
     private val _board = MutableStateFlow(emptyBoard())
@@ -48,6 +49,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         val savedGame = dbHelper.loadGame()
 
         if (savedGame != null && savedGame.state != GameState.Over::class.simpleName) {
+            currentGridSize = savedGame.board.size
+            engine = GameEngine(currentGridSize)
             engine.restore(savedGame.board, savedGame.score, savedGame.state == GameState.Won::class.simpleName)
 
             _board.value = savedGame.board
@@ -70,7 +73,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             history = ArrayDeque(historyList)
         } else {
             if (savedGame != null) _bestScore.value = savedGame.bestScore
-            restart()
+            restart(currentGridSize)
         }
     }
 
@@ -93,7 +96,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         dbHelper.saveGame(savedGame)
     }
 
-    fun restart() {
+    fun restart(size: Int = currentGridSize) {
+        currentGridSize = size
+        engine = GameEngine(currentGridSize)
         _keptPlaying.value = false
         engine.startGame()
         history.clear()
@@ -161,5 +166,5 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun emptyBoard(): List<List<Int>> = List(GameConstants.GRID_SIZE) { List(GameConstants.GRID_SIZE) { 0 } }
+    private fun emptyBoard(): List<List<Int>> = List(currentGridSize) { List(currentGridSize) { 0 } }
 }

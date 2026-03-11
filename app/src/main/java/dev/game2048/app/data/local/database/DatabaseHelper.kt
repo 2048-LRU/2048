@@ -87,7 +87,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "Game2048.db"
 
             // with chunked we re-build the matrix
             val flatList = boardString.split(",").map { it.toInt() }
-            val boardMatrix = flatList.chunked(GameConstants.GRID_SIZE)
+            val boardSize = kotlin.math.sqrt(flatList.size.toDouble()).toInt()
+            val boardMatrix = flatList.chunked(boardSize)
 
             game = SavedGame(score, bestScore, state, keptPlaying, boardMatrix, history)
         }
