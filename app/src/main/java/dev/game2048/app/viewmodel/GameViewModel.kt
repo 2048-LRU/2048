@@ -1,9 +1,11 @@
 package dev.game2048.app.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import dev.game2048.app.data.local.database.*
+import dev.game2048.app.data.local.database.DatabaseHelper
+import dev.game2048.app.data.local.database.SavedGame
 import dev.game2048.app.domain.engine.GameEngine
 import dev.game2048.app.domain.model.Direction
 import dev.game2048.app.domain.model.GameState
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 
 class GameViewModel(application: Application) : AndroidViewModel(application) {
@@ -67,7 +70,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             // JSON -> List -> ArrayDeque
             val historyList = try {
                 Json.decodeFromString<List<HistoryState>>(savedGame.history)
-            } catch (e: Exception) {
+            } catch (e: SerializationException) {
+                Log.d("GameViewModel, format", e)
+                emptyList<HistoryState>()
+            } catch (e: IllegalArgumentException) {
+                Log.d("GameViewModel, type", e)
                 emptyList<HistoryState>()
             }
             history = ArrayDeque(historyList)

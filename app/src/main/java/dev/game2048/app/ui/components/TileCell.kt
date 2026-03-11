@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.game2048.app.ui.theme.tileColor
-import dev.game2048.app.ui.theme.tileTextColor
 import dev.game2048.app.ui.theme.formatTextValues
+import dev.game2048.app.ui.theme.tileColor
 import dev.game2048.app.ui.theme.tileFontSize
+import dev.game2048.app.ui.theme.tileTextColor
 
 @Composable
 fun TileCell(value: Int, modifier: Modifier = Modifier) {
