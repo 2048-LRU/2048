@@ -49,7 +49,7 @@ private fun GameGridPreview() {
         listOf(2, 4, 8, 16),
         listOf(32, 64, 128, 256),
         listOf(512, 1024, 2048, 0),
-        listOf(0, 2, 0, 4)
+        listOf(0, 25565, 0, 4)
     )
 
     Game2048Theme {

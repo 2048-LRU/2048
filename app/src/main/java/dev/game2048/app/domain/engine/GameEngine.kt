@@ -4,7 +4,7 @@ import dev.game2048.app.domain.model.Direction
 import dev.game2048.app.utils.GameConstants
 import kotlin.random.Random
 
-class GameEngine(private val size: Int = GameConstants.GRID_SIZE) {
+class GameEngine(private val size: Int) {
 
     private var grid: Array<IntArray> = Array(size) { IntArray(size) }
     private val emptyCells = mutableListOf<Pair<Int, Int>>()
