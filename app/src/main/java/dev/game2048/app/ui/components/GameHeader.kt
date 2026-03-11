@@ -27,7 +27,6 @@ import dev.game2048.app.ui.theme.HeaderButtons
 import dev.game2048.app.ui.theme.ScoreText
 import dev.game2048.app.ui.theme.TextLight
 import dev.game2048.app.ui.theme.Tile2048
-import dev.game2048.app.ui.theme.formatTextValues
 
 @Composable
 fun GameHeader(score: Int, bestScore: Int, onRestart: () -> Unit, onUndo: () -> Unit) {
@@ -92,6 +91,8 @@ private fun HeaderControls(
 
 @Composable
 private fun ScoreBox(label: String, value: Int, modifier: Modifier = Modifier) {
+    val display = formatScore(value)
+
     Surface(color = ScoreText, shape = MaterialTheme.shapes.extraSmall, modifier = modifier) {
         Column(
             modifier = Modifier.padding(vertical = 6.dp),
@@ -105,13 +106,21 @@ private fun ScoreBox(label: String, value: Int, modifier: Modifier = Modifier) {
                 color = TextLight.copy(alpha = 0.7f)
             )
             Text(
-                text = formatTextValues(value),
-                fontSize = 18.sp,
+                text = display,
+                fontSize = scoreFontSize(display.length),
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
         }
     }
+}
+
+private fun formatScore(value: Int): String = "%,d".format(value).replace(',', ' ')
+
+private fun scoreFontSize(length: Int) = when {
+    length <= 5 -> 18.sp
+    length <= 7 -> 15.sp
+    else -> 12.sp
 }
 
 @Composable
@@ -135,6 +144,6 @@ private fun HeaderButton(text: String, onClick: () -> Unit, modifier: Modifier =
 @Composable
 private fun GameOverlayGameHeaderPreview() {
     Game2048Theme {
-        GameHeader(score = 0, bestScore = 0, onRestart = {}, onUndo = {})
+        GameHeader(score = 14580, bestScore = 128364, onRestart = {}, onUndo = {})
     }
 }
