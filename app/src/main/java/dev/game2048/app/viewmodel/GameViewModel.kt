@@ -15,8 +15,9 @@ import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
 
-    private val engine = GameEngine()
     private var isMoving = false
+    private val engine = GameEngine()
+    private val history = ArrayDeque<HistoryState>()
 
     private val _board = MutableStateFlow(emptyBoard())
     val board: StateFlow<List<List<Int>>> = _board.asStateFlow()
@@ -27,56 +28,44 @@ class GameViewModel : ViewModel() {
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score.asStateFlow()
 
-    private var _keptPlaying = MutableStateFlow<Boolean>(false)
-    var keptPlaying = _keptPlaying.asStateFlow()
-
-    // We use an ArrayDeque to perform the undo operations
-    private val history = ArrayDeque<HistoryState>()
+    private val _winTarget = MutableStateFlow(GameConstants.WIN_VALUE)
+    val winTarget: StateFlow<Int> = _winTarget.asStateFlow()
 
     init {
         restart()
     }
 
     fun restart() {
-        _keptPlaying.value = false
         engine.startGame()
         history.clear()
         _board.value = engine.board
         _state.value = GameState.Playing
         _score.value = engine.score
+        _winTarget.value = engine.winTarget
         isMoving = false
     }
 
-    fun keepPlaying() {
-        _keptPlaying.value = true
-    }
-
-    fun undo() {
-        if (isMoving || history.isEmpty()) return
-        val prevState = history.removeLast()
-        engine.restore(prevState.board, prevState.score, prevState.hasWon)
-
-        _board.value = engine.board
-        _score.value = engine.score
+    fun continueGame() {
+        engine.doubleWinTarget()
+        _winTarget.value = engine.winTarget
         _state.value = GameState.Playing
     }
 
     fun move(direction: Direction) {
-        if (isMoving || (_state.value != GameState.Playing && !_keptPlaying.value)) return
+        if (isMoving || _state.value != GameState.Playing) return
 
         viewModelScope.launch {
             isMoving = true
 
-            // Saving the old board for further restoration
-            val currentState = HistoryState(
+            val snapshot = HistoryState(
                 board = engine.board,
                 score = engine.score,
-                hasWon = engine.hasWon
+                winTarget = engine.winTarget
             )
 
             if (engine.move(direction)) {
                 // add the snapshot to our arrayDeque
-                history.addLast(currentState)
+                history.addLast(snapshot)
                 if (history.size > GameConstants.MAX_HISTORY) {
                     history.removeFirst()
                 }
@@ -91,13 +80,24 @@ class GameViewModel : ViewModel() {
 
                 _state.value = when {
                     engine.isGameOver() -> GameState.Over
-                    engine.hasWon && !_keptPlaying.value -> GameState.Won
+                    engine.hasWon -> GameState.Won
                     else -> GameState.Playing
                 }
             }
 
             isMoving = false
         }
+    }
+
+    fun undo() {
+        if (isMoving || history.isEmpty()) return
+        val prevState = history.removeLast()
+        engine.restore(prevState.board, prevState.score, prevState.winTarget)
+
+        _board.value = engine.board
+        _score.value = engine.score
+        _winTarget.value = engine.winTarget
+        _state.value = GameState.Playing
     }
 
     private fun emptyBoard(): List<List<Int>> = List(GameConstants.GRID_SIZE) { List(GameConstants.GRID_SIZE) { 0 } }
