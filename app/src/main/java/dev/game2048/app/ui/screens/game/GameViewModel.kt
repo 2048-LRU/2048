@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.game2048.app.data.local.entity.GameEntity
+import dev.game2048.app.data.local.entity.GameStatsEntity
 import dev.game2048.app.data.repository.GameRepository
 import dev.game2048.app.domain.engine.GameEngine
 import dev.game2048.app.domain.model.Direction
@@ -41,6 +42,7 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
     val winTarget: StateFlow<Int> = _winTarget.asStateFlow()
 
     init {
+        loadBestScore()
         loadOrStartGame()
     }
 
@@ -127,11 +129,19 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
                 history.addAll(saved.history)
 
                 syncUi()
-                _bestScore.value = saved.bestScore
                 _state.value = saved.state
             } else {
-                _bestScore.value = saved?.bestScore ?: 0
                 restart(currentGridSize)
+            }
+        }
+    }
+
+    private fun loadBestScore() {
+        viewModelScope.launch {
+            val stats = repository.loadStats()
+            if (stats != null) {
+                _bestScore.value = stats.bestScore
+                syncUi()
             }
         }
     }
@@ -142,12 +152,13 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
                 GameEntity(
                     board = engine.board,
                     score = engine.score,
-                    bestScore = _bestScore.value,
                     winTarget = engine.winTarget,
                     state = _state.value,
                     history = history.toList()
                 )
             )
+
+            TODO("Ajouter le save des stats via une autre classe")
         }
     }
 

@@ -10,7 +10,6 @@ data class GameEntity(
     @PrimaryKey val id: Int = 1,
     val board: List<List<Int>>,
     val score: Int,
-    val bestScore: Int,
     val winTarget: Int,
     val state: GameState,
     val history: List<HistoryState>
