@@ -26,12 +26,17 @@ import dev.game2048.app.ui.components.SettingsDialog
 import dev.game2048.app.ui.theme.Game2048Theme
 
 @Composable
-fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = hiltViewModel()) {
+fun GameScreen(
+    modifier: Modifier = Modifier,
+    viewModel: GameViewModel = hiltViewModel(),
+    isSoundEnabled: Boolean = true,
+    onSoundToggled: (Boolean) -> Unit = {}
+) {
     val board by viewModel.board.collectAsState()
     val state by viewModel.state.collectAsState()
     val winTarget by viewModel.winTarget.collectAsState()
     val score by viewModel.score.collectAsState()
-    val bestScore by viewModel.bestScore.collectAsState()
+    val bestScore = 1 // by viewModel.bestScore.collectAsState()
 
     var showSettings by remember { mutableStateOf(false) }
 
@@ -74,7 +79,9 @@ fun GameScreen(modifier: Modifier = Modifier, viewModel: GameViewModel = hiltVie
                 onChangeGridSize = { newSize ->
                     viewModel.restart(newSize)
                     showSettings = false
-                }
+                },
+                isSoundEnabled = isSoundEnabled,
+                onSoundToggled = onSoundToggled
             )
         }
     }

@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -15,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,6 +37,8 @@ fun SettingsDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    isSoundEnabled: Boolean,
+    onSoundToggled: (Boolean) -> Unit,
     onChangeGridSize: (Int) -> Unit
 ) {
     var isSelectingSize by remember { mutableStateOf(false) }
@@ -45,7 +52,8 @@ fun SettingsDialog(
             text = {
                 DialogContent(
                     isSelectingSize = isSelectingSize,
-                    onNavigateToSettings = onNavigateToSettings,
+                    isSoundEnabled = isSoundEnabled,
+                    onSoundToggled = onSoundToggled,
                     onEnterSizeSelection = { isSelectingSize = true },
                     onSizeSelected = { size ->
                         onChangeGridSize(size)
@@ -94,13 +102,18 @@ private fun DialogTitle(isSelectingSize: Boolean) {
 @Composable
 private fun DialogContent(
     isSelectingSize: Boolean,
-    onNavigateToSettings: () -> Unit,
+    isSoundEnabled: Boolean,
+    onSoundToggled: (Boolean) -> Unit,
     onEnterSizeSelection: () -> Unit,
     onSizeSelected: (Int) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (!isSelectingSize) {
-            MainActions(onNavigateToSettings, onEnterSizeSelection)
+            MainActions(
+                isSoundEnabled = isSoundEnabled,
+                onSoundToggled = onSoundToggled,
+                onGridSize = onEnterSizeSelection
+            )
         } else {
             SizeSelectionActions(onSizeSelected)
         }
@@ -108,8 +121,29 @@ private fun DialogContent(
 }
 
 @Composable
-private fun MainActions(onSettings: () -> Unit, onGridSize: () -> Unit) {
-    MenuButtonItem("Settings", onClick = onSettings)
+private fun MainActions(isSoundEnabled: Boolean, onSoundToggled: (Boolean) -> Unit, onGridSize: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+                contentDescription = "sound icon",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text("sound", style = MaterialTheme.typography.bodyLarge)
+        }
+        Switch(
+            checked = isSoundEnabled,
+            onCheckedChange = onSoundToggled
+        )
+    }
+
     MenuButtonItem("Change grid size", onClick = onGridSize)
 }
 

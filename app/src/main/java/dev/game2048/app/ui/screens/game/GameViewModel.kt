@@ -35,14 +35,10 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score.asStateFlow()
 
-    private val _bestScore = MutableStateFlow(0)
-    val bestScore: StateFlow<Int> = _bestScore.asStateFlow()
-
     private val _winTarget = MutableStateFlow(GameConstants.WIN_VALUE)
     val winTarget: StateFlow<Int> = _winTarget.asStateFlow()
 
     init {
-        loadBestScore()
         loadOrStartGame()
     }
 
@@ -92,7 +88,6 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
                 engine.spawnRandomTile()
                 _board.value = engine.board
                 _score.value = engine.score
-                updateBestScore()
 
                 _state.value = when {
                     engine.isGameOver() -> GameState.Over
@@ -136,16 +131,6 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
         }
     }
 
-    private fun loadBestScore() {
-        viewModelScope.launch {
-            val stats = repository.loadStats()
-            if (stats != null) {
-                _bestScore.value = stats.bestScore
-                syncUi()
-            }
-        }
-    }
-
     private fun saveGame() {
         viewModelScope.launch {
             repository.saveGame(
@@ -157,13 +142,7 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
                     history = history.toList()
                 )
             )
-
-            TODO("Ajouter le save des stats via une autre classe")
         }
-    }
-
-    private fun updateBestScore() {
-        _bestScore.value = maxOf(_bestScore.value, _score.value)
     }
 
     private fun syncUi() {
