@@ -26,7 +26,6 @@ import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.HeaderButtons
 import dev.game2048.app.ui.theme.ScoreText
 import dev.game2048.app.ui.theme.TextLight
-import dev.game2048.app.ui.theme.Tile2048
 
 @Composable
 fun GameHeader(score: Int, bestScore: Int, onRestart: () -> Unit, onUndo: () -> Unit) {
@@ -50,7 +49,7 @@ fun GameHeader(score: Int, bestScore: Int, onRestart: () -> Unit, onUndo: () -> 
 
 @Composable
 private fun TitleBadge(modifier: Modifier = Modifier) {
-    Surface(color = Tile2048, shape = MaterialTheme.shapes.extraSmall, modifier = modifier) {
+    Surface(color = MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.extraSmall, modifier = modifier) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = "2048",

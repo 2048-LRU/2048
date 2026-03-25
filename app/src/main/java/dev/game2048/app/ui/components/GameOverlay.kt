@@ -21,7 +21,6 @@ import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.ui.theme.TextLight
-import dev.game2048.app.ui.theme.Tile2048
 import dev.game2048.app.utils.GameConstants
 
 @Composable
@@ -36,7 +35,13 @@ fun GameOverlay(
     val nextTarget = winTarget * 2
     val buttonText = if (isWin) "Play for $nextTarget or more" else "Restart"
 
-    val backgroundColor = if (isWin) Tile2048.copy(alpha = 0.6f) else Color.Black.copy(alpha = 0.5f)
+    val backgroundColor = if (isWin) {
+        MaterialTheme.colorScheme.primary.copy(
+            alpha = 0.6f
+        )
+    } else {
+        Color.Black.copy(alpha = 0.5f)
+    }
 
     Box(
         modifier = Modifier

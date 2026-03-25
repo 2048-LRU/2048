@@ -12,16 +12,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import dev.game2048.app.ui.theme.tileColor
-import dev.game2048.app.ui.theme.tileTextColor
+import dev.game2048.app.ui.theme.LocalGameColors
 
 @Composable
 fun TileCell(value: Int, modifier: Modifier = Modifier) {
+    val gameColors = LocalGameColors.current
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .clip(MaterialTheme.shapes.small)
-            .background(tileColor(value)),
+            .background(gameColors.tileColor(value)),
         contentAlignment = Alignment.Center
     ) {
         if (value > 0) {
@@ -31,7 +31,7 @@ fun TileCell(value: Int, modifier: Modifier = Modifier) {
                 text = display,
                 fontSize = tileFontSize(display.length),
                 fontWeight = FontWeight.Bold,
-                color = tileTextColor(value)
+                color = gameColors.tileTextColor(value)
             )
         }
     }

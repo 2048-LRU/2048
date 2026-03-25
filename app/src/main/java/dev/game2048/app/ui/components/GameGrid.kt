@@ -16,15 +16,16 @@ import androidx.compose.ui.unit.dp
 import dev.game2048.app.domain.model.Direction
 import dev.game2048.app.ui.modifiers.onSwipe
 import dev.game2048.app.ui.theme.Game2048Theme
-import dev.game2048.app.ui.theme.GridBackground
+import dev.game2048.app.ui.theme.LocalGameColors
 
 @Composable
 fun GameGrid(board: List<List<Int>>, modifier: Modifier = Modifier, onMove: (Direction) -> Unit) {
+    val gameColors = LocalGameColors.current
     Column(
         modifier = modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(12.dp))
-            .background(GridBackground)
+            .background(gameColors.gridBackground)
             .onSwipe { direction -> onMove(direction) }
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)

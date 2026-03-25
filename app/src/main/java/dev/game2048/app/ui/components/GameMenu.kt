@@ -1,5 +1,6 @@
 package dev.game2048.app.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -7,12 +8,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -29,8 +35,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.game2048.app.ui.theme.AppTheme
 
 @Composable
 fun SettingsDialog(
@@ -39,7 +50,9 @@ fun SettingsDialog(
     onNavigateToSettings: () -> Unit,
     isSoundEnabled: Boolean,
     onSoundToggled: (Boolean) -> Unit,
-    onChangeGridSize: (Int) -> Unit
+    onChangeGridSize: (Int) -> Unit,
+    currentTheme: AppTheme,
+    onThemeChanged: (AppTheme) -> Unit
 ) {
     var isSelectingSize by remember { mutableStateOf(false) }
 
@@ -59,7 +72,9 @@ fun SettingsDialog(
                         onChangeGridSize(size)
                         isSelectingSize = false
                         onDismiss()
-                    }
+                    },
+                    currentTheme = currentTheme,
+                    onThemeChanged = onThemeChanged
                 )
             },
             confirmButton = {
@@ -105,14 +120,18 @@ private fun DialogContent(
     isSoundEnabled: Boolean,
     onSoundToggled: (Boolean) -> Unit,
     onEnterSizeSelection: () -> Unit,
-    onSizeSelected: (Int) -> Unit
+    onSizeSelected: (Int) -> Unit,
+    currentTheme: AppTheme,
+    onThemeChanged: (AppTheme) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (!isSelectingSize) {
             MainActions(
                 isSoundEnabled = isSoundEnabled,
                 onSoundToggled = onSoundToggled,
-                onGridSize = onEnterSizeSelection
+                onGridSize = onEnterSizeSelection,
+                currentTheme = currentTheme,
+                onThemeChanged = onThemeChanged
             )
         } else {
             SizeSelectionActions(onSizeSelected)
@@ -121,30 +140,79 @@ private fun DialogContent(
 }
 
 @Composable
-private fun MainActions(isSoundEnabled: Boolean, onSoundToggled: (Boolean) -> Unit, onGridSize: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+private fun MainActions(
+    isSoundEnabled: Boolean,
+    onSoundToggled: (Boolean) -> Unit,
+    onGridSize: () -> Unit,
+    currentTheme: AppTheme,
+    onThemeChanged: (AppTheme) -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(vertical = 8.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-                contentDescription = "sound icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text("sound", style = MaterialTheme.typography.bodyLarge)
-        }
-        Switch(
-            checked = isSoundEnabled,
-            onCheckedChange = onSoundToggled
-        )
-    }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+                    contentDescription = "sound icon",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text("Sound", style = MaterialTheme.typography.bodyLarge)
+            }
 
-    MenuButtonItem("Change grid size", onClick = onGridSize)
+            Switch(
+                checked = isSoundEnabled,
+                onCheckedChange = onSoundToggled
+            )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Theme",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                ThemeOption(
+                    modifier = Modifier.weight(1f),
+                    isSelected = currentTheme == AppTheme.LIGHT,
+                    icon = Icons.Default.LightMode,
+                    label = "Light",
+                    color = Color(0xFFE5A000),
+                    onClick = { onThemeChanged(AppTheme.LIGHT) }
+                )
+                ThemeOption(
+                    modifier = Modifier.weight(1f),
+                    isSelected = currentTheme == AppTheme.DARK,
+                    icon = Icons.Default.DarkMode,
+                    label = "Dark",
+                    color = Color(0xFF6A5ACD),
+                    onClick = { onThemeChanged(AppTheme.DARK) }
+                )
+                ThemeOption(
+                    modifier = Modifier.weight(1f),
+                    isSelected = currentTheme == AppTheme.WATER,
+                    icon = Icons.Default.WaterDrop,
+                    label = "Water",
+                    color = MaterialTheme.colorScheme.primary,
+                    onClick = { onThemeChanged(AppTheme.WATER) }
+                )
+            }
+        }
+
+        MenuButtonItem("Change grid size", onClick = onGridSize)
+    }
 }
 
 @Composable
@@ -203,5 +271,39 @@ private fun WarningText(text: String) {
 private fun DialogNavigationButton(isSelectingSize: Boolean, onBack: () -> Unit, onClose: () -> Unit) {
     TextButton(onClick = if (isSelectingSize) onBack else onClose) {
         Text(if (isSelectingSize) "Back" else "Close")
+    }
+}
+
+@Composable
+private fun ThemeOption(
+    isSelected: Boolean,
+    icon: ImageVector,
+    label: String,
+    color: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val alpha = if (isSelected) 1f else 0.4f
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = color.copy(alpha = alpha),
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+        )
     }
 }

@@ -13,8 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.edit
 import dagger.hilt.android.AndroidEntryPoint
 import dev.game2048.app.ui.screens.game.GameScreen
+import dev.game2048.app.ui.theme.AppTheme
 import dev.game2048.app.ui.theme.Game2048Theme
 
 @AndroidEntryPoint
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val defaultSoundState = prefs.getBoolean("sound_enabled", true)
+        val savedThemeName = prefs.getString("theme_pref", AppTheme.LIGHT.name) ?: AppTheme.LIGHT.name
 
         if (defaultSoundState) {
             initMediaPlayer()
@@ -35,15 +38,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var isSoundEnabled by remember { mutableStateOf(defaultSoundState) }
+            var currentTheme by remember { mutableStateOf(AppTheme.valueOf(savedThemeName)) }
 
-            Game2048Theme {
+            Game2048Theme(themeType = currentTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     GameScreen(
                         modifier = Modifier.padding(innerPadding),
                         isSoundEnabled = isSoundEnabled,
                         onSoundToggled = { enabled ->
                             isSoundEnabled = enabled
-                            prefs.edit().putBoolean("sound_enabled", enabled).apply()
+                            prefs.edit { putBoolean("sound_enabled", enabled) }
 
                             if (enabled) {
                                 initMediaPlayer()
@@ -51,6 +55,11 @@ class MainActivity : ComponentActivity() {
                             } else {
                                 mediaPlayer?.pause()
                             }
+                        },
+                        currentTheme = currentTheme,
+                        onThemeChanged = { newTheme ->
+                            currentTheme = newTheme
+                            prefs.edit { putString("theme_pref", newTheme.name) }
                         }
                     )
                 }
