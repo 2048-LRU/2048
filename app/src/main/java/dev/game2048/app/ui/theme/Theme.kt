@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
-enum class AppTheme {
+enum class Theme {
     LIGHT,
     DARK,
     WATER
@@ -48,19 +48,19 @@ private val WaterColorScheme = darkColorScheme(
 
 @Composable
 fun Game2048Theme(
-    themeType: AppTheme = if (isSystemInDarkTheme()) AppTheme.DARK else AppTheme.LIGHT,
+    themeType: Theme = if (isSystemInDarkTheme()) Theme.DARK else Theme.LIGHT,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (themeType) {
-        AppTheme.LIGHT -> LightColorScheme
-        AppTheme.DARK -> DarkColorScheme
-        AppTheme.WATER -> WaterColorScheme
+        Theme.LIGHT -> LightColorScheme
+        Theme.DARK -> DarkColorScheme
+        Theme.WATER -> WaterColorScheme
     }
 
     val gameColors = when (themeType) {
-        AppTheme.LIGHT -> LightGameColors
-        AppTheme.DARK -> DarkGameColors
-        AppTheme.WATER -> WaterGameColors
+        Theme.LIGHT -> LightGameColors
+        Theme.DARK -> DarkGameColors
+        Theme.WATER -> WaterGameColors
     }
 
     CompositionLocalProvider(LocalGameColors provides gameColors) {

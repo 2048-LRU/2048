@@ -15,6 +15,7 @@ class GameEngine(private val size: Int = GameConstants.GRID_SIZE) {
         private set
     var score: Int = 0
         private set
+    var hasMerged: Boolean = false
     val board: List<List<Int>> get() = grid.map { it.toList() }
 
     fun startGame() {
@@ -106,6 +107,7 @@ class GameEngine(private val size: Int = GameConstants.GRID_SIZE) {
 
         while (i < row.size) {
             if (i < row.lastIndex && row[i] == row[i + 1]) {
+                hasMerged = true
                 val merged = row[i] * 2
                 result.add(merged)
                 score += merged

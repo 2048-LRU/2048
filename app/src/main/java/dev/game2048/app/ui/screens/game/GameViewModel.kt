@@ -1,10 +1,13 @@
 package dev.game2048.app.ui.screens.game
 
+import android.content.Context
+import android.media.SoundPool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.game2048.app.R
 import dev.game2048.app.data.local.entity.GameEntity
-import dev.game2048.app.data.local.entity.GameStatsEntity
 import dev.game2048.app.data.repository.GameRepository
 import dev.game2048.app.domain.engine.GameEngine
 import dev.game2048.app.domain.model.Direction
@@ -19,8 +22,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class GameViewModel @Inject constructor(private val repository: GameRepository) : ViewModel() {
+class GameViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
+    private val repository: GameRepository
+) : ViewModel() {
     private var isMoving = false
+    private var audioPlayer: SoundPool = SoundPool.Builder().setMaxStreams(2).build()
+    var mergeFailId: Int = 0
+    var mergeSuccessId: Int = 0
 
     private var currentGridSize = GameConstants.GRID_SIZE
     private var engine = GameEngine(currentGridSize)
@@ -39,6 +48,7 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
     val winTarget: StateFlow<Int> = _winTarget.asStateFlow()
 
     init {
+        loadSongs()
         loadOrStartGame()
     }
 
@@ -68,6 +78,7 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
 
         viewModelScope.launch {
             isMoving = true
+            engine.hasMerged = false
 
             val snapshot = HistoryState(
                 board = engine.board,
@@ -76,13 +87,13 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
             )
 
             if (engine.move(direction)) {
+                playSound(engine.hasMerged)
                 history.addLast(snapshot)
                 if (history.size > GameConstants.MAX_HISTORY) {
                     history.removeFirst()
                 }
 
                 _board.value = engine.board
-
                 delay(GameConstants.SPAWN_DELAY_MS)
 
                 engine.spawnRandomTile()
@@ -111,6 +122,11 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
         _state.value = GameState.Playing
 
         saveGame()
+    }
+
+    private fun loadSongs() {
+        mergeFailId = audioPlayer.load(context, R.raw.merge_failed, 1)
+        mergeSuccessId = audioPlayer.load(context, R.raw.merge_success, 1)
     }
 
     private fun loadOrStartGame() {
@@ -149,6 +165,18 @@ class GameViewModel @Inject constructor(private val repository: GameRepository) 
         _board.value = engine.board
         _score.value = engine.score
         _winTarget.value = engine.winTarget
+    }
+
+    private fun playSound(hasMerged: Boolean) {
+        val soundId = if (hasMerged) mergeSuccessId else mergeFailId
+        if (soundId != 0) {
+            audioPlayer.play(soundId, 1f, 1f, 0, 0, 1f)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioPlayer.release()
     }
 
     private fun emptyBoard(): List<List<Int>> = List(currentGridSize) { List(currentGridSize) { 0 } }

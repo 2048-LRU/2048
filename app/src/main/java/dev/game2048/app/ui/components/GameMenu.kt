@@ -41,18 +41,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.game2048.app.ui.theme.AppTheme
+import dev.game2048.app.ui.theme.Theme
 
 @Composable
 fun SettingsDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onNavigateToSettings: () -> Unit,
     isSoundEnabled: Boolean,
     onSoundToggled: (Boolean) -> Unit,
     onChangeGridSize: (Int) -> Unit,
-    currentTheme: AppTheme,
-    onThemeChanged: (AppTheme) -> Unit
+    currentTheme: Theme,
+    onThemeChanged: (Theme) -> Unit
 ) {
     var isSelectingSize by remember { mutableStateOf(false) }
 
@@ -121,8 +120,8 @@ private fun DialogContent(
     onSoundToggled: (Boolean) -> Unit,
     onEnterSizeSelection: () -> Unit,
     onSizeSelected: (Int) -> Unit,
-    currentTheme: AppTheme,
-    onThemeChanged: (AppTheme) -> Unit
+    currentTheme: Theme,
+    onThemeChanged: (Theme) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (!isSelectingSize) {
@@ -144,73 +143,15 @@ private fun MainActions(
     isSoundEnabled: Boolean,
     onSoundToggled: (Boolean) -> Unit,
     onGridSize: () -> Unit,
-    currentTheme: AppTheme,
-    onThemeChanged: (AppTheme) -> Unit
+    currentTheme: Theme,
+    onThemeChanged: (Theme) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-                    contentDescription = "sound icon",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text("Sound", style = MaterialTheme.typography.bodyLarge)
-            }
-
-            Switch(
-                checked = isSoundEnabled,
-                onCheckedChange = onSoundToggled
-            )
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Theme",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ThemeOption(
-                    modifier = Modifier.weight(1f),
-                    isSelected = currentTheme == AppTheme.LIGHT,
-                    icon = Icons.Default.LightMode,
-                    label = "Light",
-                    color = Color(0xFFE5A000),
-                    onClick = { onThemeChanged(AppTheme.LIGHT) }
-                )
-                ThemeOption(
-                    modifier = Modifier.weight(1f),
-                    isSelected = currentTheme == AppTheme.DARK,
-                    icon = Icons.Default.DarkMode,
-                    label = "Dark",
-                    color = Color(0xFF6A5ACD),
-                    onClick = { onThemeChanged(AppTheme.DARK) }
-                )
-                ThemeOption(
-                    modifier = Modifier.weight(1f),
-                    isSelected = currentTheme == AppTheme.WATER,
-                    icon = Icons.Default.WaterDrop,
-                    label = "Water",
-                    color = MaterialTheme.colorScheme.primary,
-                    onClick = { onThemeChanged(AppTheme.WATER) }
-                )
-            }
-        }
-
+        SoundSection(isSoundEnabled, onSoundToggled)
+        ThemeSection(onThemeChanged, currentTheme)
         MenuButtonItem("Change grid size", onClick = onGridSize)
     }
 }
@@ -275,14 +216,7 @@ private fun DialogNavigationButton(isSelectingSize: Boolean, onBack: () -> Unit,
 }
 
 @Composable
-private fun ThemeOption(
-    isSelected: Boolean,
-    icon: ImageVector,
-    label: String,
-    color: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun ThemeOption(isSelected: Boolean, icon: ImageVector, label: String, color: Color, onClick: () -> Unit) {
     val alpha = if (isSelected) 1f else 0.4f
 
     Column(
@@ -305,5 +239,73 @@ private fun ThemeOption(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )
+    }
+}
+
+@Composable
+private fun SoundSection(isSoundEnabled: Boolean, onSoundToggled: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = if (isSoundEnabled) {
+                    Icons.AutoMirrored.Filled.VolumeUp
+                } else {
+                    Icons.AutoMirrored.Filled.VolumeOff
+                },
+
+                contentDescription = "sound icon",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text("Sound", style = MaterialTheme.typography.bodyLarge)
+        }
+
+        Switch(
+            checked = isSoundEnabled,
+            onCheckedChange = onSoundToggled
+        )
+    }
+}
+
+@Composable
+private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "Theme",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            ThemeOption(
+                isSelected = currentTheme == Theme.LIGHT,
+                icon = Icons.Default.LightMode,
+                label = "Light",
+                color = Color(0xFFE5A000),
+                onClick = { onThemeChanged(Theme.LIGHT) }
+            )
+            ThemeOption(
+                isSelected = currentTheme == Theme.DARK,
+                icon = Icons.Default.DarkMode,
+                label = "Dark",
+                color = Color(0xFF6A5ACD),
+                onClick = { onThemeChanged(Theme.DARK) }
+            )
+            ThemeOption(
+                isSelected = currentTheme == Theme.WATER,
+                icon = Icons.Default.WaterDrop,
+                label = "Water",
+                color = MaterialTheme.colorScheme.primary,
+                onClick = { onThemeChanged(Theme.WATER) }
+            )
+        }
     }
 }

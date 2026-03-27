@@ -1,6 +1,5 @@
 package dev.game2048.app
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.edit
 import dagger.hilt.android.AndroidEntryPoint
 import dev.game2048.app.ui.screens.game.GameScreen
-import dev.game2048.app.ui.theme.AppTheme
 import dev.game2048.app.ui.theme.Game2048Theme
+import dev.game2048.app.ui.theme.Theme
+import dev.game2048.app.utils.MediaPlayer
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private var mediaPlayer: MediaPlayer? = null
+    private val mediaPlayer = MediaPlayer()
     private val prefs by lazy { getSharedPreferences("game_prefs", MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,15 +30,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val defaultSoundState = prefs.getBoolean("sound_enabled", true)
-        val savedThemeName = prefs.getString("theme_pref", AppTheme.LIGHT.name) ?: AppTheme.LIGHT.name
+        val savedThemeName = prefs.getString("theme_pref", Theme.LIGHT.name) ?: Theme.LIGHT.name
 
-        if (defaultSoundState) {
-            initMediaPlayer()
-        }
+        mediaPlayer.initMediaPlayer(this)
 
         setContent {
             var isSoundEnabled by remember { mutableStateOf(defaultSoundState) }
-            var currentTheme by remember { mutableStateOf(AppTheme.valueOf(savedThemeName)) }
+            var currentTheme by remember { mutableStateOf(Theme.valueOf(savedThemeName)) }
 
             Game2048Theme(themeType = currentTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -50,10 +48,9 @@ class MainActivity : ComponentActivity() {
                             prefs.edit { putBoolean("sound_enabled", enabled) }
 
                             if (enabled) {
-                                initMediaPlayer()
-                                mediaPlayer?.start()
+                                mediaPlayer.startMediaPlayer()
                             } else {
-                                mediaPlayer?.pause()
+                                mediaPlayer.pauseMediaPlayer()
                             }
                         },
                         currentTheme = currentTheme,
@@ -67,32 +64,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun initMediaPlayer() {
-        if (mediaPlayer == null) {
-            try {
-                mediaPlayer = MediaPlayer.create(this, R.raw.bg_music)
-                mediaPlayer?.isLooping = true
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     override fun onStart() {
         super.onStart()
         if (prefs.getBoolean("sound_enabled", true)) {
-            mediaPlayer?.start()
+            mediaPlayer.startMediaPlayer()
         }
     }
 
     override fun onStop() {
         super.onStop()
-        mediaPlayer?.pause()
+        mediaPlayer.pauseMediaPlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
-        mediaPlayer = null
+        mediaPlayer.destroyMediaPlayer()
     }
 }

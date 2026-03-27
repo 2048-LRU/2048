@@ -23,8 +23,8 @@ import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
 import dev.game2048.app.ui.components.MenuButton
 import dev.game2048.app.ui.components.SettingsDialog
-import dev.game2048.app.ui.theme.AppTheme
 import dev.game2048.app.ui.theme.Game2048Theme
+import dev.game2048.app.ui.theme.Theme
 
 @Composable
 fun GameScreen(
@@ -32,8 +32,8 @@ fun GameScreen(
     viewModel: GameViewModel = hiltViewModel(),
     isSoundEnabled: Boolean = true,
     onSoundToggled: (Boolean) -> Unit = {},
-    currentTheme: AppTheme = AppTheme.LIGHT,
-    onThemeChanged: (AppTheme) -> Unit = {}
+    currentTheme: Theme = Theme.LIGHT,
+    onThemeChanged: (Theme) -> Unit = {}
 ) {
     val board by viewModel.board.collectAsState()
     val state by viewModel.state.collectAsState()
@@ -76,9 +76,6 @@ fun GameScreen(
             SettingsDialog(
                 showDialog = showSettings,
                 onDismiss = { showSettings = false },
-                onNavigateToSettings = {
-                    showSettings = false
-                },
                 onChangeGridSize = { newSize ->
                     viewModel.restart(newSize)
                     showSettings = false
