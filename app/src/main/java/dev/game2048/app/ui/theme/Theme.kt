@@ -1,6 +1,10 @@
 package dev.game2048.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -45,6 +49,12 @@ private val WaterColorScheme = darkColorScheme(
     onSurface = WaterText,
     error = WaterError
 )
+
+fun getThemeData(theme: Theme, primaryColor: Color) = when (theme) {
+    Theme.LIGHT -> Triple("Light", Icons.Default.LightMode, Color(0xFFE5A000))
+    Theme.DARK -> Triple("Dark", Icons.Default.DarkMode, Color(0xFF6A5ACD))
+    Theme.WATER -> Triple("Water", Icons.Default.WaterDrop, primaryColor)
+}
 
 @Composable
 fun Game2048Theme(

@@ -15,11 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SwipeRight
-import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -43,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.game2048.app.ui.theme.Theme
+import dev.game2048.app.ui.theme.getThemeData
 
 @Composable
 fun SettingsDialog(
@@ -89,6 +87,32 @@ fun SettingsDialog(
                 )
             }
         )
+    }
+}
+
+@Composable
+private fun SettingsSwitchRow(
+    label: String,
+    icon: ImageVector,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    iconContentDescription: String? = null
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = icon,
+                contentDescription = iconContentDescription,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+        }
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 
@@ -161,9 +185,22 @@ private fun MainActions(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(vertical = 8.dp)
     ) {
-        SoundSection(isSoundEnabled, onSoundToggled)
-        AnimationSection(isAnimationEnabled, onAnimationEnabled)
+        SettingsSwitchRow(
+            label = "Sound",
+            icon = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+            checked = isSoundEnabled,
+            onCheckedChange = onSoundToggled
+        )
+
+        SettingsSwitchRow(
+            label = "Animation",
+            icon = Icons.Filled.SwipeRight,
+            checked = isAnimationEnabled,
+            onCheckedChange = onAnimationEnabled
+        )
+
         ThemeSection(onThemeChanged, currentTheme)
+
         MenuButtonItem("Change grid size", onClick = onGridSize)
     }
 }
@@ -255,63 +292,10 @@ private fun ThemeOption(isSelected: Boolean, icon: ImageVector, label: String, c
 }
 
 @Composable
-private fun SoundSection(isSoundEnabled: Boolean, onSoundToggled: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = if (isSoundEnabled) {
-                    Icons.AutoMirrored.Filled.VolumeUp
-                } else {
-                    Icons.AutoMirrored.Filled.VolumeOff
-                },
-
-                contentDescription = "sound icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text("Sound", style = MaterialTheme.typography.bodyLarge)
-        }
-
-        Switch(
-            checked = isSoundEnabled,
-            onCheckedChange = onSoundToggled
-        )
-    }
-}
-
-@Composable
-private fun AnimationSection(isAnimationEnabled: Boolean, onAnimationEnabled: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.SwipeRight,
-                contentDescription = "animation icon",
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text("Animation", style = MaterialTheme.typography.bodyLarge)
-        }
-
-        Switch(
-            checked = isAnimationEnabled,
-            onCheckedChange = onAnimationEnabled
-        )
-    }
-}
-
-@Composable
 private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    val primary = MaterialTheme.colorScheme.primary
+
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Theme",
             style = MaterialTheme.typography.bodyLarge,
@@ -321,27 +305,17 @@ private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            ThemeOption(
-                isSelected = currentTheme == Theme.LIGHT,
-                icon = Icons.Default.LightMode,
-                label = "Light",
-                color = Color(0xFFE5A000),
-                onClick = { onThemeChanged(Theme.LIGHT) }
-            )
-            ThemeOption(
-                isSelected = currentTheme == Theme.DARK,
-                icon = Icons.Default.DarkMode,
-                label = "Dark",
-                color = Color(0xFF6A5ACD),
-                onClick = { onThemeChanged(Theme.DARK) }
-            )
-            ThemeOption(
-                isSelected = currentTheme == Theme.WATER,
-                icon = Icons.Default.WaterDrop,
-                label = "Water",
-                color = MaterialTheme.colorScheme.primary,
-                onClick = { onThemeChanged(Theme.WATER) }
-            )
+            Theme.entries.forEach { theme ->
+                val (label, icon, color) = getThemeData(theme, primary)
+
+                ThemeOption(
+                    isSelected = currentTheme == theme,
+                    icon = icon,
+                    label = label,
+                    color = color,
+                    onClick = { onThemeChanged(theme) }
+                )
+            }
         }
     }
 }
