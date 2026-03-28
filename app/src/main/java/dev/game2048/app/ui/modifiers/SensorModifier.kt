@@ -8,7 +8,6 @@ import android.hardware.SensorManager
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -54,7 +53,9 @@ fun Modifier.onSensorTilt(
                 }
             }
 
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+            @Suppress("detekt:EmptyFunctionBlock")
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            }
         }
 
         sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_UI)

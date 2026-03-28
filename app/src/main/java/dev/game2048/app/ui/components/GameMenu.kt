@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,12 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SwipeRight
-import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -115,7 +110,11 @@ private fun MainActions(settings: GameSettings, onSettingsChanged: (GameSettings
     ) {
         SettingsSwitchRow(
             label = "Sound",
-            icon = if (settings.isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+            icon = if (settings.isSoundEnabled) {
+                Icons.AutoMirrored.Filled.VolumeUp
+            } else {
+                Icons.AutoMirrored.Filled.VolumeOff
+            },
             checked = settings.isSoundEnabled,
             onCheckedChange = { onSettingsChanged(settings.copy(isSoundEnabled = it)) }
         )
