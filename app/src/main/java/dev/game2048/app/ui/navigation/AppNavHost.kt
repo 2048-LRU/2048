@@ -3,14 +3,10 @@ package dev.game2048.app.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import dagger.hilt.android.scopes.ViewModelScoped
-import dev.game2048.app.data.repository.SettingsRepository
-import dev.game2048.app.domain.model.GameSettings
 import dev.game2048.app.ui.dialogs.settings.SettingsDialog
 import dev.game2048.app.ui.screens.game.GameScreen
 import dev.game2048.app.ui.screens.game.GameViewModel

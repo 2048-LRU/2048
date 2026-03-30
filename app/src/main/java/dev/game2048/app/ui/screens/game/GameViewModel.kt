@@ -12,16 +12,19 @@ import dev.game2048.app.data.repository.SettingsRepository
 import dev.game2048.app.data.repository.StatsRepository
 import dev.game2048.app.domain.engine.GameEngine
 import dev.game2048.app.domain.model.Direction
+import dev.game2048.app.domain.model.GameSettings
 import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.domain.model.HistoryState
-import dev.game2048.app.domain.model.Tile
 import dev.game2048.app.utils.GameConstants
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -36,9 +39,12 @@ class GameViewModel @Inject constructor(
     var mergeFailId: Int = 0
     var mergeSuccessId: Int = 0
 
-    private var engine = GameEngine()
+    val settings: StateFlow<GameSettings> = settingsRepository.settingsFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), GameSettings())
     private val history = ArrayDeque<HistoryState>()
     private var gridSize = GameConstants.GRID_SIZE
+
+    private var engine = GameEngine(gridSize)
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -49,6 +55,10 @@ class GameViewModel @Inject constructor(
     }
 
     fun restart() {
+        if (_uiState.value.state == GameState.Playing && _uiState.value.score > 0) {
+            updateStats(GameState.Over)
+        }
+
         resetGame()
         saveGame()
     }
@@ -197,13 +207,11 @@ class GameViewModel @Inject constructor(
     private fun updateStats(endState: GameState) {
         viewModelScope.launch {
             val current = statsRepository.stats.value
-            val topTile = _uiState.value.board.maxOf { row -> row.max() }
+
             val updated = current.copy(
-                bestScore = maxOf(current.bestScore, _uiState.value.score),
                 gamesPlayed = current.gamesPlayed + 1,
                 wins = current.wins + if (endState == GameState.Won) 1 else 0,
-                losses = current.losses + if (endState == GameState.Over) 1 else 0,
-                topTile = maxOf(current.topTile, topTile)
+                losses = current.losses + if (endState == GameState.Over) 1 else 0
             )
             statsRepository.save(updated)
         }
@@ -212,6 +220,19 @@ class GameViewModel @Inject constructor(
     private fun saveGame() {
         viewModelScope.launch {
             gameStateRepository.save(_uiState.value.toEntity(history.toList()))
+
+            val currentStats = statsRepository.stats.value
+            val topTile = _uiState.value.board.maxOf { row ->
+                row.maxOfOrNull { tile -> tile?.value ?: 0 } ?: 0
+            }
+
+            if (_uiState.value.score > currentStats.bestScore || topTile > currentStats.topTile) {
+                val updatedStats = currentStats.copy(
+                    bestScore = maxOf(currentStats.bestScore, _uiState.value.score),
+                    topTile = maxOf(currentStats.topTile, topTile)
+                )
+                statsRepository.save(updatedStats)
+            }
         }
     }
 
@@ -226,6 +247,4 @@ class GameViewModel @Inject constructor(
         super.onCleared()
         audioPlayer.release()
     }
-
-    private fun emptyBoard(): List<List<Tile?>> = List(gridSize) { List(gridSize) { null } }
 }

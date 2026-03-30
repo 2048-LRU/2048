@@ -16,38 +16,27 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import dev.game2048.app.domain.model.GameSettings
 import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
-import dev.game2048.app.ui.components.MenuButton
-import dev.game2048.app.ui.components.SettingsDialog
 import dev.game2048.app.ui.theme.GameTitle
 
 @Composable
 fun GameScreen(
     modifier: Modifier = Modifier,
     viewModel: GameViewModel = hiltViewModel(),
-    settings: GameSettings,
-    onSettingsChanged: (GameSettings) -> Unit,
     onNavigateToStats: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    var showSettings by remember { mutableStateOf(false) }
+    val settings by viewModel.settings.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        MenuButton(onClick = { showSettings = true })
-
         if (uiState.state == GameState.Over || uiState.state == GameState.Won) {
             GameOverlay(
                 state = uiState.state,
@@ -63,9 +52,7 @@ fun GameScreen(
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier = Modifier.fillMaxSize().padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -81,23 +68,10 @@ fun GameScreen(
 
             GameGrid(
                 board = uiState.board,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 onMove = viewModel::move,
                 animated = settings.isAnimationEnabled,
                 isAccelerometerEnabled = settings.isAccelerometerEnabled
-            )
-
-            SettingsDialog(
-                showDialog = showSettings,
-                onDismiss = { showSettings = false },
-                settings = settings,
-                onSettingsChanged = onSettingsChanged,
-                onChangeGridSize = { newSize ->
-                    viewModel.restart(newSize)
-                    showSettings = false
-                }
             )
         }
     }

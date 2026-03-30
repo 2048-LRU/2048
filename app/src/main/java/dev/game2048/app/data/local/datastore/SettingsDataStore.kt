@@ -8,9 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import dev.game2048.app.MainActivity
 import dev.game2048.app.domain.model.GameSettings
-import dev.game2048.app.ui.navigation.Route
 import dev.game2048.app.ui.theme.Theme
 import dev.game2048.app.utils.GameConstants
 import kotlinx.coroutines.flow.Flow
