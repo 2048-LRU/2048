@@ -9,6 +9,8 @@ val HeaderButtons = Color(0xFFC73838)
 val TextDark = Color(0xFF776E65)
 val TextLight = Color(0xFFF9F6F2)
 
+val Tile2048 = Color(0xFFEDC22E)
+
 // Light theme
 val LightBackground = Color(0xFFFAF8EF)
 val LightSurface = Color(0xFFFFFFFF)
