@@ -29,7 +29,7 @@ import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.ui.theme.TextLight
 import dev.game2048.app.ui.theme.Tile2048
 
-private val GridSizeOptions = listOf(4, 5, 6)
+private val GridSizeOptions = listOf(3, 4, 5, 6)
 
 @Composable
 fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: () -> Unit, onApply: () -> Unit) {
@@ -101,13 +101,5 @@ private fun DialogButtons(hasChanges: Boolean, onDismiss: () -> Unit, onApply: (
         TextButton(onClick = onApply, enabled = hasChanges) {
             Text(text = "Apply", fontWeight = FontWeight.Bold, color = if (hasChanges) Tile2048 else Color.Gray)
         }
-    }
-}
-
-@Preview
-@Composable
-private fun SettingsDialogPreview() {
-    Game2048Theme {
-        SettingsDialog(onDismiss = {}, onApply = {})
     }
 }
