@@ -1,9 +1,13 @@
 package dev.game2048.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,16 +28,10 @@ import dev.game2048.app.ui.theme.TextLight
 import dev.game2048.app.utils.GameConstants
 
 @Composable
-fun GameOverlay(
-    state: GameState,
-    winTarget: Int = GameConstants.WIN_VALUE,
-    onRestart: () -> Unit,
-    onContinue: () -> Unit
-) {
+fun GameOverlay(state: GameState, onRestart: () -> Unit, onContinue: () -> Unit) {
     val isWin = state == GameState.Won
     val text = if (isWin) "YOU WIN!" else "GAME OVER"
-    val nextTarget = winTarget * 2
-    val buttonText = if (isWin) "Play for $nextTarget or more" else "Restart"
+    val buttonText = if (isWin) "Continue" else "New Game"
 
     val backgroundColor = if (isWin) {
         MaterialTheme.colorScheme.primary.copy(
@@ -57,19 +55,37 @@ fun GameOverlay(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        Button(
-            onClick = if (isWin) onContinue else onRestart,
-            shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(containerColor = GameTitle),
-            contentPadding = PaddingValues(vertical = 16.dp, horizontal = 32.dp),
-            modifier = Modifier.align(Alignment.BottomCenter)
+        Row(
+            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = buttonText,
-                color = TextLight,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Button(
+                onClick = if (isWin) onContinue else onRestart,
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(containerColor = GameTitle),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 32.dp)
+            ) {
+                Text(
+                    text = buttonText,
+                    color = TextLight,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Button(
+                onClick = {},
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(containerColor = GameTitle),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 32.dp)
+            ) {
+                Text(
+                    text = "Share",
+                    color = TextLight,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

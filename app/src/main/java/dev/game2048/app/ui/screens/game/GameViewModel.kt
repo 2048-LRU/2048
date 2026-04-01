@@ -89,6 +89,7 @@ class GameViewModel @Inject constructor(
             )
 
             if (engine.move(direction)) {
+                _uiState.update { it.copy(moves = it.moves + 1) }
                 history.addLast(snapshot)
                 if (history.size > current.undosRemaining) history.removeFirst()
 
@@ -154,7 +155,8 @@ class GameViewModel @Inject constructor(
                 winTarget = engine.winTarget,
                 state = GameState.Playing,
                 undosRemaining = GameConstants.MAX_UNDO,
-                isMoving = false
+                isMoving = false,
+                moves = 0
             )
         }
     }

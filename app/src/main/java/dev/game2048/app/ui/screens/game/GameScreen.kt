@@ -25,6 +25,7 @@ import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
 import dev.game2048.app.ui.theme.GameTitle
+import dev.game2048.app.ui.theme.LocalGameColors
 
 @Composable
 fun GameScreen(
@@ -40,7 +41,6 @@ fun GameScreen(
         if (uiState.state == GameState.Over || uiState.state == GameState.Won) {
             GameOverlay(
                 state = uiState.state,
-                winTarget = uiState.winTarget,
                 onRestart = viewModel::restart,
                 onContinue = viewModel::continueGame
             )
@@ -102,11 +102,12 @@ private fun TopBarIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val iconColor = LocalGameColors.current.settings
     IconButton(
         onClick = onClick,
         modifier = modifier.size(40.dp),
         colors = IconButtonDefaults.iconButtonColors(contentColor = GameTitle)
     ) {
-        Icon(imageVector = icon, contentDescription = description, modifier = Modifier.size(28.dp))
+        Icon(imageVector = icon, contentDescription = description, modifier = Modifier.size(28.dp), tint = iconColor)
     }
 }

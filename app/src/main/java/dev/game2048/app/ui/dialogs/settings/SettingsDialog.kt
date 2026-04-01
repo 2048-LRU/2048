@@ -101,7 +101,7 @@ private fun SettingsContent(
         Text("Settings", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = GameTitle)
 
         SettingsSwitchRow(
-            label = "Sound",
+            label = "Music",
             icon = if (settings.isSoundEnabled) {
                 Icons.AutoMirrored.Filled.VolumeUp
             } else {
@@ -175,7 +175,7 @@ private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
         )
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Theme.entries.forEach { theme ->
-                val (label, icon, color) = getThemeData(theme, GameTitle)
+                val (label, icon, color) = getThemeData(theme)
                 ThemeOption(
                     isSelected = currentTheme == theme,
                     icon = icon,

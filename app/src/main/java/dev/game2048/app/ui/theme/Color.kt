@@ -29,6 +29,7 @@ val WaterSecondary = Color(0xFF94A3B8)
 val WaterError = Color(0xFFEF4444)
 
 data class GameColors(
+    val settings: Color,
     val gridBackground: Color,
     val tileEmpty: Color,
     val tile2: Color,
@@ -66,7 +67,7 @@ data class GameColors(
 }
 
 val LightGameColors = GameColors(
-    gridBackground = Color(0xFFAD9D8F), tileEmpty = Color(0x99C1B3A4),
+    gridBackground = Color(0xFFAD9D8F), tileEmpty = Color(0x99C1B3A4), settings = Color(0xFF000000),
     tile2 = Color(0xFFEEE4DA), tile4 = Color(0xFFEDE0C8), tile8 = Color(0xFFF2B179),
     tile16 = Color(0xFFF59563), tile32 = Color(0xFFF67C5F), tile64 = Color(0xFFF65E3B),
     tile128 = Color(0xFFEDCF72), tile256 = Color(0xFFEDCC61), tile512 = Color(0xFFEDC850),
@@ -75,7 +76,7 @@ val LightGameColors = GameColors(
 )
 
 val DarkGameColors = GameColors(
-    gridBackground = Color(0xFF3E3E3E), tileEmpty = Color(0x33FFFFFF),
+    gridBackground = Color(0xFF3E3E3E), tileEmpty = Color(0x33FFFFFF), settings = Color(0xFFFFFFFF),
     tile2 = Color(0xFF4A4A4A), tile4 = Color(0xFF5A5A5A), tile8 = Color(0xFFF2A154),
     tile16 = Color(0xFFE76F51), tile32 = Color(0xFFE24A33), tile64 = Color(0xFFD8281C),
     tile128 = Color(0xFFD4AF37), tile256 = Color(0xFFC5A017), tile512 = Color(0xFFB38D0D),
@@ -84,7 +85,7 @@ val DarkGameColors = GameColors(
 )
 
 val WaterGameColors = GameColors(
-    gridBackground = Color(0xFF0F172A), tileEmpty = Color(0x33000000),
+    gridBackground = Color(0xFF0F172A), tileEmpty = Color(0x33000000), settings = Color(0xFF0EA5E9),
     tile2 = Color(0xFFBAE6FD), tile4 = Color(0xFF7DD3FC), tile8 = Color(0xFF38BDF8),
     tile16 = Color(0xFF0EA5E9), tile32 = Color(0xFF0284C7), tile64 = Color(0xFF0369A1),
     tile128 = Color(0xFF34D399), tile256 = Color(0xFF10B981), tile512 = Color(0xFF059669),

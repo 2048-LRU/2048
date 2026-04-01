@@ -13,7 +13,8 @@ data class GameUiState(
     val winTarget: Int = GameConstants.WIN_VALUE,
     val state: GameState = GameState.Playing,
     val undosRemaining: Int = GameConstants.MAX_UNDO,
-    val isMoving: Boolean = false
+    val isMoving: Boolean = false,
+    var moves: Int = 0
 )
 
 fun GameStateEntity.toUiState(bestScore: Int): GameUiState = GameUiState(
@@ -23,7 +24,8 @@ fun GameStateEntity.toUiState(bestScore: Int): GameUiState = GameUiState(
     winTarget = winTarget,
     state = state,
     undosRemaining = undosRemaining,
-    isMoving = false
+    isMoving = false,
+    moves = moves
 )
 
 fun GameUiState.toEntity(history: List<HistoryState>): GameStateEntity = GameStateEntity(
@@ -32,5 +34,6 @@ fun GameUiState.toEntity(history: List<HistoryState>): GameStateEntity = GameSta
     winTarget = winTarget,
     state = state,
     history = history,
-    undosRemaining = undosRemaining
+    undosRemaining = undosRemaining,
+    moves = moves
 )

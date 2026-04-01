@@ -11,7 +11,7 @@ import dev.game2048.app.data.local.entity.GameStatsEntity
 
 @Database(
     entities = [GameStateEntity::class, GameStatsEntity::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(GameConverters::class)

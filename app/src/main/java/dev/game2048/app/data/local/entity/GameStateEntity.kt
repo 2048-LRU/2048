@@ -15,5 +15,6 @@ data class GameStateEntity(
     val winTarget: Int = GameConstants.WIN_VALUE,
     val state: GameState = GameState.Playing,
     val history: List<HistoryState> = emptyList(),
-    val undosRemaining: Int = GameConstants.MAX_UNDO
+    val undosRemaining: Int = GameConstants.MAX_UNDO,
+    val moves: Int = 0
 )

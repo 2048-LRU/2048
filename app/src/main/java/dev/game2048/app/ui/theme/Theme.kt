@@ -19,7 +19,7 @@ enum class Theme {
 }
 
 private val LightColorScheme = lightColorScheme(
-    primary = GameTitle,
+    primary = LightGameColors.tile2048,
     onPrimary = Color.White,
     secondary = HeaderButtons,
     onSecondary = Color.White,
@@ -50,10 +50,10 @@ private val WaterColorScheme = darkColorScheme(
     error = WaterError
 )
 
-fun getThemeData(theme: Theme, primaryColor: Color) = when (theme) {
+fun getThemeData(theme: Theme) = when (theme) {
     Theme.LIGHT -> Triple("Light", Icons.Default.LightMode, Color(0xFFE5A000))
     Theme.DARK -> Triple("Dark", Icons.Default.DarkMode, Color(0xFF6A5ACD))
-    Theme.WATER -> Triple("Water", Icons.Default.WaterDrop, primaryColor)
+    Theme.WATER -> Triple("Water", Icons.Default.WaterDrop, Color(0xFF1BA3DE))
 }
 
 @Composable
