@@ -14,10 +14,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.game2048.app.domain.model.GameState
@@ -26,6 +35,8 @@ import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
 import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.ui.theme.LocalGameColors
+import dev.game2048.app.utils.shareGameScore
+import kotlinx.coroutines.launch
 
 @Composable
 fun GameScreen(
@@ -37,41 +48,67 @@ fun GameScreen(
     val uiState by viewModel.uiState.collectAsState()
     val settings by viewModel.settings.collectAsState()
 
+    val context = LocalContext.current
+    val graphicsLayer = rememberGraphicsLayer()
+    val coroutineScope = rememberCoroutineScope()
+
+    var showRecap by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.state) {
+        if (uiState.state == GameState.Playing) showRecap = false
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
-        if (uiState.state == GameState.Over || uiState.state == GameState.Won) {
-            GameOverlay(
-                state = uiState.state,
-                onRestart = viewModel::restart,
-                onContinue = viewModel::continueGame
-            )
-        }
-
-        TopBarIcons(
-            onSettingsClick = onNavigateToSettings,
-            onStatsClick = onNavigateToStats
-        )
-
         Column(
-            modifier = Modifier.fillMaxSize().padding(32.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp)
+                .drawWithContent {
+                    graphicsLayer.record { this@drawWithContent.drawContent() }
+                    drawContent()
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (uiState.state == GameState.Playing) {
-                GameHeader(
-                    uiState.score,
-                    uiState.bestScore,
-                    uiState.undosRemaining,
-                    onRestart = viewModel::restart,
-                    onUndo = viewModel::undo
-                )
-            }
+            GameHeader(
+                score = uiState.score,
+                bestScore = uiState.bestScore,
+                undosRemaining = uiState.undosRemaining,
+                onRestart = viewModel::restart,
+                onUndo = viewModel::undo
+            )
 
             GameGrid(
                 board = uiState.board,
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 onMove = viewModel::move,
                 animated = settings.isAnimationEnabled,
                 isAccelerometerEnabled = settings.isAccelerometerEnabled
+            )
+        }
+
+        if (uiState.state != GameState.Over) {
+            TopBarIcons(
+                onSettingsClick = onNavigateToSettings,
+                onStatsClick = onNavigateToStats
+            )
+        }
+
+        if (uiState.state == GameState.Over || uiState.state == GameState.Won) {
+            GameOverlay(
+                uistate = uiState,
+                showRecap = showRecap,
+                onRequestRecap = { showRecap = true },
+                onShareGrid = {
+                    coroutineScope.launch {
+                        val bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                        shareGameScore(context, bitmap, uiState.score)
+                    }
+                },
+                onRestart = viewModel::restart,
+                onContinue = viewModel::continueGame
             )
         }
     }

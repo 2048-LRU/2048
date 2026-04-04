@@ -15,7 +15,12 @@ data class GameUiState(
     val undosRemaining: Int = GameConstants.MAX_UNDO,
     val isMoving: Boolean = false,
     var moves: Int = 0
-)
+) {
+    val currentTopTile: Int
+        get() = board.maxOf { row ->
+            row.maxOfOrNull { tile -> tile?.value ?: 0 } ?: 0
+        }
+}
 
 fun GameStateEntity.toUiState(bestScore: Int): GameUiState = GameUiState(
     board = board,
