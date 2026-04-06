@@ -46,8 +46,8 @@ class GameEngine(private val size: Int) {
 
     fun isGameOver(): Boolean {
         if (refreshEmptyCells()) return false
-        return computeGrid(Direction.LEFT).contentDeepEquals(grid) &&
-            computeGrid(Direction.UP).contentDeepEquals(grid)
+        return computeGrid(Direction.LEFT, simulate = true).contentDeepEquals(grid) &&
+            computeGrid(Direction.UP, simulate = true).contentDeepEquals(grid)
     }
 
     fun spawnRandomTile() {
@@ -58,7 +58,7 @@ class GameEngine(private val size: Int) {
     }
 
     fun move(direction: Direction): Boolean {
-        val newGrid = computeGrid(direction)
+        val newGrid = computeGrid(direction, simulate = false)
         val hasChanged = !newGrid.contentDeepEquals(grid)
 
         if (hasChanged) {
@@ -74,19 +74,19 @@ class GameEngine(private val size: Int) {
         hasWon = false
     }
 
-    private fun computeGrid(direction: Direction): Array<Array<Tile?>> {
+    private fun computeGrid(direction: Direction, simulate: Boolean = false): Array<Array<Tile?>> {
         val reverse = direction == Direction.RIGHT || direction == Direction.DOWN
         val vertical = direction == Direction.UP || direction == Direction.DOWN
 
         val source = if (vertical) transpose(grid) else grid
-        val moved = source.map { row -> slide(row, reverse) }.toTypedArray()
+        val moved = source.map { row -> slide(row, reverse, simulate) }.toTypedArray()
 
         return if (vertical) transpose(moved) else moved
     }
 
-    private fun slide(row: Array<Tile?>, reverse: Boolean): Array<Tile?> {
+    private fun slide(row: Array<Tile?>, reverse: Boolean, simulate: Boolean): Array<Tile?> {
         val filtered = row.filterNotNull().let { if (reverse) it.reversed() else it }
-        val merged = mergeRow(filtered)
+        val merged = mergeRow(filtered, simulate)
         val padded = merged + List(size - merged.size) { null }
         return (if (reverse) padded.reversed() else padded).toTypedArray()
     }
@@ -103,17 +103,22 @@ class GameEngine(private val size: Int) {
         return emptyCells.isNotEmpty()
     }
 
-    private fun mergeRow(row: List<Tile>): List<Tile> {
+    private fun mergeRow(row: List<Tile>, simulate: Boolean): List<Tile> {
         val result = mutableListOf<Tile>()
         var i = 0
 
         while (i < row.size) {
             if (i < row.lastIndex && row[i].value == row[i + 1].value) {
-                hasMerged = true
+                if (!simulate) hasMerged = true
+
                 val merged = row[i].value * 2
                 result.add(Tile(id = row[i].id, value = merged))
-                score += merged
-                if (merged == winTarget) hasWon = true
+
+                if (!simulate) {
+                    score += merged
+                    if (merged == winTarget) hasWon = true
+                }
+
                 i += 2
             } else {
                 result.add(row[i])
