@@ -3,6 +3,7 @@ package dev.game2048.app.ui.screens.stats
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,20 +40,29 @@ private val BackgroundColor = Color(0xFFFAF8EF)
 private val CardColor = Color(0xFFEDE4DA)
 
 @Composable
-fun StatsScreen(modifier: Modifier = Modifier, onBack: () -> Unit, viewModel: StatsViewModel = hiltViewModel()) {
+fun StatsScreen(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit,
+    viewModel: StatsViewModel = hiltViewModel(),
+    onReset: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier.fillMaxSize().background(BackgroundColor).padding(24.dp)) {
         BackButton(onBack)
         Spacer(modifier = Modifier.height(12.dp))
         StatsTitle()
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         HighlightRow(bestScore = uiState.bestScore, topTile = uiState.topTile)
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         DetailCard(uiState)
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         TopScoresCard(scores = uiState.topScores)
+
+        Row(modifier = Modifier.fillMaxSize().padding(12.dp), horizontalArrangement = Arrangement.Center) {
+            ResetButton(onReset)
+        }
     }
 }
 
@@ -147,6 +160,20 @@ private fun TopScoresCard(scores: List<Int>) {
         scores.forEachIndexed { index, score ->
             DetailRow(label = "#${index + 1}", value = formatStat(score))
         }
+    }
+}
+
+@Composable
+private fun ResetButton(onClick: () -> Unit) {
+    val secondary = MaterialTheme.colorScheme.secondary
+    val textSecondary = MaterialTheme.colorScheme.onSecondary
+    Button(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.small,
+        colors = ButtonDefaults.buttonColors(containerColor = secondary),
+        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 32.dp)
+    ) {
+        Text(text = "Reset Score", color = textSecondary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
 }
 

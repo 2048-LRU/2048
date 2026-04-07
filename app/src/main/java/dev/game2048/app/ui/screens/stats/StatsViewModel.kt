@@ -21,4 +21,10 @@ class StatsViewModel @Inject constructor(private val repository: StatsRepository
     init {
         viewModelScope.launch { repository.load() }
     }
+
+    fun resetStats() {
+        viewModelScope.launch {
+            repository.resetStats()
+        }
+    }
 }

@@ -35,7 +35,7 @@ class SettingsDataStore(private val context: Context) {
             GameSettings(
                 isSoundEnabled = prefs[Keys.SOUND_ENABLED] ?: true,
                 currentTheme = Theme.valueOf(prefs[Keys.CURRENT_THEME] ?: Theme.LIGHT.name),
-                isAccelerometerEnabled = prefs[Keys.SENSOR_ENABLED] ?: true,
+                isAccelerometerEnabled = prefs[Keys.SENSOR_ENABLED] ?: false,
                 isAnimationEnabled = prefs[Keys.ANIMATION_ENABLED] ?: true
             )
         }

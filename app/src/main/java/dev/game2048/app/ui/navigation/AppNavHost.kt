@@ -11,6 +11,7 @@ import dev.game2048.app.ui.dialogs.settings.SettingsDialog
 import dev.game2048.app.ui.screens.game.GameScreen
 import dev.game2048.app.ui.screens.game.GameViewModel
 import dev.game2048.app.ui.screens.stats.StatsScreen
+import dev.game2048.app.ui.screens.stats.StatsViewModel
 
 @Composable
 fun AppNavHost(modifier: Modifier = Modifier) {
@@ -19,6 +20,7 @@ fun AppNavHost(modifier: Modifier = Modifier) {
     NavHost(navController = navController, startDestination = Route.Game) {
         composable<Route.Game> { backStackEntry ->
             val viewModel: GameViewModel = hiltViewModel(backStackEntry)
+            val statsViewModel: StatsViewModel = hiltViewModel(backStackEntry)
 
             GameScreen(
                 modifier = modifier,
@@ -33,10 +35,14 @@ fun AppNavHost(modifier: Modifier = Modifier) {
                 onApply = { navController.popBackStack() }
             )
         }
-        composable<Route.Stats> {
+        composable<Route.Stats> { backStackEntry ->
+            val statsViewModel: StatsViewModel = hiltViewModel(backStackEntry)
+
             StatsScreen(
                 modifier = modifier,
-                onBack = { navController.popBackStack() }
+                viewModel = statsViewModel,
+                onBack = { navController.popBackStack() },
+                onReset = { statsViewModel.resetStats() }
             )
         }
     }

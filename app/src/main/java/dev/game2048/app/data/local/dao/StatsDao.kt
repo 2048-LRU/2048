@@ -13,4 +13,7 @@ interface StatsDao {
 
     @Upsert
     suspend fun saveStats(entity: GameStatsEntity)
+
+    @Query("DELETE FROM game_stats WHERE id = 1")
+    suspend fun clearStats()
 }
