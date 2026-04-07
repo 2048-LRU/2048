@@ -2,6 +2,7 @@ package dev.game2048.app.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.WaterDrop
@@ -13,8 +14,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
 enum class Theme {
-    LIGHT,
-    DARK,
+    SYSTEM,
     WATER
 }
 
@@ -51,25 +51,26 @@ private val WaterColorScheme = darkColorScheme(
 )
 
 fun getThemeData(theme: Theme) = when (theme) {
-    Theme.LIGHT -> Triple("Light", Icons.Default.LightMode, Color(0xFFE5A000))
-    Theme.DARK -> Triple("Dark", Icons.Default.DarkMode, Color(0xFF6A5ACD))
-    Theme.WATER -> Triple("Water", Icons.Default.WaterDrop, Color(0xFF1BA3DE))
+    Theme.SYSTEM -> Triple(
+        "Auto",
+        listOf(Icons.Default.LightMode, Icons.Default.DarkMode),
+        listOf(Color(0xFFE5A000), Color(0xFF6A5ACD))
+    )
+
+    Theme.WATER -> Triple("Water", listOf(Icons.Default.WaterDrop), listOf(Color(0xFF1BA3DE)))
 }
 
 @Composable
-fun Game2048Theme(
-    themeType: Theme = if (isSystemInDarkTheme()) Theme.DARK else Theme.LIGHT,
-    content: @Composable () -> Unit
-) {
+fun Game2048Theme(themeType: Theme = Theme.SYSTEM, content: @Composable () -> Unit) {
+    val isDark = isSystemInDarkTheme()
+
     val colorScheme = when (themeType) {
-        Theme.LIGHT -> LightColorScheme
-        Theme.DARK -> DarkColorScheme
+        Theme.SYSTEM -> if (isDark) DarkColorScheme else LightColorScheme
         Theme.WATER -> WaterColorScheme
     }
 
     val gameColors = when (themeType) {
-        Theme.LIGHT -> LightGameColors
-        Theme.DARK -> DarkGameColors
+        Theme.SYSTEM -> if (isDark) DarkGameColors else LightGameColors
         Theme.WATER -> WaterGameColors
     }
 

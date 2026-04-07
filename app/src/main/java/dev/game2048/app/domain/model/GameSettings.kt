@@ -6,5 +6,5 @@ data class GameSettings(
     val isSoundEnabled: Boolean = true,
     val isAnimationEnabled: Boolean = true,
     val isAccelerometerEnabled: Boolean = false,
-    val currentTheme: Theme = Theme.LIGHT
+    val currentTheme: Theme = Theme.SYSTEM
 )

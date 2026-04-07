@@ -2,6 +2,7 @@ package dev.game2048.app.ui.dialogs.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -176,11 +177,12 @@ private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Theme.entries.forEach { theme ->
                 val (label, icon, color) = getThemeData(theme)
+
                 ThemeOption(
                     isSelected = currentTheme == theme,
-                    icon = icon,
+                    icons = icon,
                     label = label,
-                    color = color,
+                    colors = color,
                     onClick = { onThemeChanged(theme) }
                 )
             }
@@ -189,18 +191,19 @@ private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
 }
 
 @Composable
-private fun ThemeOption(isSelected: Boolean, icon: ImageVector, label: String, color: Color, onClick: () -> Unit) {
+private fun ThemeOption(
+    isSelected: Boolean,
+    icons: List<ImageVector>,
+    label: String,
+    colors: List<Color>,
+    onClick: () -> Unit
+) {
     val alpha = if (isSelected) 1f else 0.4f
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(onClick = onClick).padding(8.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = color.copy(alpha = alpha),
-            modifier = Modifier.size(32.dp)
-        )
+        ThemeIcon(icons = icons, colors = colors, alpha = alpha)
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = label,
@@ -208,6 +211,40 @@ private fun ThemeOption(isSelected: Boolean, icon: ImageVector, label: String, c
             color = GameTitle.copy(alpha = alpha),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )
+    }
+}
+
+@Composable
+private fun ThemeIcon(icons: List<ImageVector>, colors: List<Color>, alpha: Float) {
+    Box(
+        modifier = Modifier.size(42.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (icons.size > 1) {
+            Icon(
+                imageVector = icons[1],
+                contentDescription = null,
+                tint = colors[1].copy(alpha = alpha * 0.6f),
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.TopEnd)
+            )
+            Icon(
+                imageVector = icons[0],
+                contentDescription = null,
+                tint = colors[0].copy(alpha = alpha),
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.BottomStart)
+            )
+        } else {
+            Icon(
+                imageVector = icons[0],
+                contentDescription = null,
+                tint = colors[0].copy(alpha = alpha),
+                modifier = Modifier.size(32.dp)
+            )
+        }
     }
 }
 
