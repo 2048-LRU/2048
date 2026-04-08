@@ -1,5 +1,6 @@
 package dev.game2048.app.ui.dialogs.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,18 +16,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.ScreenRotation
-import androidx.compose.material.icons.filled.SwipeRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -53,46 +57,55 @@ fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: ()
     val uiState by viewModel.uiState.collectAsState()
 
     var currentSettings by remember(uiState.toEntity()) { mutableStateOf(uiState.toEntity()) }
-    val hasChanges = currentSettings.gridSize != uiState.gridSize || currentSettings != uiState.toEntity()
+    val hasChanges = currentSettings != uiState.toEntity()
+    val gridChanged = currentSettings.gridSize != uiState.gridSize
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.background,
-        tonalElevation = 6.dp
+        tonalElevation = 8.dp
     ) {
-        SettingsContent(
-            settings = currentSettings,
-            gridChanges = currentSettings.gridSize != uiState.gridSize,
-            hasChanges = hasChanges,
-            onSettingsChange = { currentSettings = it },
-            onDismiss = onDismiss,
-            onApply = {
-                viewModel.applySettings(currentSettings) {
-                    onApply()
-                }
-            }
-        )
+        Column(
+            modifier = Modifier
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                "Settings",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            ToggleSection(
+                settings = currentSettings,
+                onSettingsChange = { currentSettings = it }
+            )
+
+            ThemeSection(
+                currentTheme = currentSettings.currentTheme,
+                onThemeChanged = { currentSettings = currentSettings.copy(currentTheme = it) }
+            )
+
+            GridSizeSection(
+                selectedGridSize = currentSettings.gridSize,
+                gridChanged = gridChanged,
+                onSelect = { currentSettings = currentSettings.copy(gridSize = it) }
+            )
+
+            ButtonRow(
+                hasChanges = hasChanges,
+                onDismiss = onDismiss,
+                onApply = { viewModel.applySettings(currentSettings) { onApply() } }
+            )
+        }
     }
 }
 
 @Composable
-private fun SettingsContent(
-    settings: GameSettings,
-    gridChanges: Boolean,
-    hasChanges: Boolean,
-    onSettingsChange: (GameSettings) -> Unit,
-    onDismiss: () -> Unit,
-    onApply: () -> Unit
-) {
-    val onBg = MaterialTheme.colorScheme.onBackground
-
-    Column(
-        modifier = Modifier.padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Text("Settings", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = onBg)
-
-        SettingsSwitchRow(
+private fun ToggleSection(settings: GameSettings, onSettingsChange: (GameSettings) -> Unit) {
+    SectionCard {
+        ToggleRow(
             label = "Music",
             icon = if (settings.isMusicEnabled) {
                 Icons.AutoMirrored.Filled.VolumeUp
@@ -102,92 +115,67 @@ private fun SettingsContent(
             checked = settings.isMusicEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isMusicEnabled = it)) }
         )
-
-        SettingsSwitchRow(
+        ToggleRow(
             label = "Animation",
-            icon = Icons.Filled.SwipeRight,
+            icon = Icons.Filled.Animation,
             checked = settings.isAnimationEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isAnimationEnabled = it)) }
         )
-
-        SettingsSwitchRow(
+        ToggleRow(
             label = "Motion",
             icon = Icons.Filled.ScreenRotation,
             checked = settings.isAccelerometerEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isAccelerometerEnabled = it)) }
         )
-
-        SettingsSwitchRow(
+        ToggleRow(
             label = "Images",
             icon = Icons.Filled.Image,
             checked = settings.isImageEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isImageEnabled = it)) }
         )
-
-        ThemeSection(
-            currentTheme = settings.currentTheme,
-            onThemeChanged = { onSettingsChange(settings.copy(currentTheme = it)) }
-        )
-
-        HorizontalDivider(color = onBg.copy(alpha = 0.2f))
-
-        GridSizeSection(
-            selectedGridSize = settings.gridSize,
-            onSelect = { onSettingsChange(settings.copy(gridSize = it)) }
-        )
-
-        if (gridChanges) {
-            Text(
-                "⚠ Changing the size will restart the game.",
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.error,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
-        DialogButtons(hasChanges = hasChanges, onDismiss = onDismiss, onApply = onApply)
     }
 }
 
 @Composable
-private fun SettingsSwitchRow(label: String, icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    val onBg = MaterialTheme.colorScheme.onBackground
+private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val primary = MaterialTheme.colorScheme.primary
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = icon, contentDescription = label, tint = onBg)
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(label, fontSize = 16.sp, color = onBg)
+            Icon(imageVector = icon, contentDescription = label, tint = primary, modifier = Modifier.size(22.dp))
+            Spacer(modifier = Modifier.width(14.dp))
+            Text(label, fontSize = 15.sp, color = onSurface)
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(checkedTrackColor = primary)
+        )
     }
 }
 
 @Composable
-private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
-    val onBg = MaterialTheme.colorScheme.onBackground
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            "Theme",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = onBg,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+private fun ThemeSection(currentTheme: Theme, onThemeChanged: (Theme) -> Unit) {
+    SectionCard {
+        SectionTitle("Theme")
+        Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Theme.entries.forEach { theme ->
-                val (label, icon, color) = getThemeData(theme)
+                val (label, icons, colors) = getThemeData(theme)
+                val isSelected = currentTheme == theme
 
-                ThemeOption(
-                    isSelected = currentTheme == theme,
-                    icons = icon,
+                ThemeChip(
+                    isSelected = isSelected,
+                    icons = icons,
                     label = label,
-                    colors = color,
+                    colors = colors,
                     onClick = { onThemeChanged(theme) }
                 )
             }
@@ -196,101 +184,145 @@ private fun ThemeSection(onThemeChanged: (Theme) -> Unit, currentTheme: Theme) {
 }
 
 @Composable
-private fun ThemeOption(
+private fun ThemeChip(
     isSelected: Boolean,
     icons: List<ImageVector>,
     label: String,
     colors: List<Color>,
     onClick: () -> Unit
 ) {
-    val alpha = if (isSelected) 1f else 0.4f
-    val onBg = MaterialTheme.colorScheme.onBackground
+    val alpha = if (isSelected) 1f else 0.35f
+    val onSurface = MaterialTheme.colorScheme.onSurface
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(onClick = onClick).padding(8.dp)
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(10.dp)
     ) {
-        ThemeIcon(icons = icons, colors = colors, alpha = alpha)
+        Box(modifier = Modifier.size(42.dp), contentAlignment = Alignment.Center) {
+            if (icons.size > 1) {
+                Icon(
+                    icons[1],
+                    null,
+                    tint = colors[1].copy(alpha = alpha * 0.6f),
+                    modifier = Modifier.size(22.dp).align(Alignment.TopEnd)
+                )
+                Icon(
+                    icons[0],
+                    null,
+                    tint = colors[0].copy(alpha = alpha),
+                    modifier = Modifier.size(22.dp).align(Alignment.BottomStart)
+                )
+            } else {
+                Icon(icons[0], null, tint = colors[0].copy(alpha = alpha), modifier = Modifier.size(30.dp))
+            }
+        }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = label,
             fontSize = 12.sp,
-            color = onBg.copy(alpha = alpha),
+            color = onSurface.copy(alpha = alpha),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
         )
     }
 }
 
 @Composable
-private fun ThemeIcon(icons: List<ImageVector>, colors: List<Color>, alpha: Float) {
-    Box(
-        modifier = Modifier.size(42.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (icons.size > 1) {
-            Icon(
-                imageVector = icons[1],
-                contentDescription = null,
-                tint = colors[1].copy(alpha = alpha * 0.6f),
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.TopEnd)
-            )
-            Icon(
-                imageVector = icons[0],
-                contentDescription = null,
-                tint = colors[0].copy(alpha = alpha),
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomStart)
-            )
-        } else {
-            Icon(
-                imageVector = icons[0],
-                contentDescription = null,
-                tint = colors[0].copy(alpha = alpha),
-                modifier = Modifier.size(32.dp)
-            )
-        }
-    }
-}
+private fun GridSizeSection(selectedGridSize: Int, gridChanged: Boolean, onSelect: (Int) -> Unit) {
+    val primary = MaterialTheme.colorScheme.primary
+    val onPrimary = MaterialTheme.colorScheme.onPrimary
 
-@Composable
-private fun GridSizeSection(selectedGridSize: Int, onSelect: (Int) -> Unit) {
-    val onBg = MaterialTheme.colorScheme.onBackground
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = "Grid size", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = onBg)
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    SectionCard {
+        SectionTitle("Grid size")
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             GridSizeOptions.forEach { size ->
                 FilterChip(
                     selected = selectedGridSize == size,
                     onClick = { onSelect(size) },
-                    label = { Text(text = "$size×$size", fontWeight = FontWeight.Bold, fontSize = 14.sp) },
+                    label = {
+                        Text(
+                            "${size}x$size",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            maxLines = 1,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primary,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                        selectedContainerColor = primary,
+                        selectedLabelColor = onPrimary
                     ),
                     modifier = Modifier.weight(1f)
                 )
             }
         }
+        if (gridChanged) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                "⚠ Changing the size will restart the game.",
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Medium
+            )
+        }
     }
 }
 
 @Composable
-private fun DialogButtons(hasChanges: Boolean, onDismiss: () -> Unit, onApply: () -> Unit) {
-    val onBg = MaterialTheme.colorScheme.onBackground
+private fun ButtonRow(hasChanges: Boolean, onDismiss: () -> Unit, onApply: () -> Unit) {
     val primary = MaterialTheme.colorScheme.primary
+    val onPrimary = MaterialTheme.colorScheme.onPrimary
+    val onBg = MaterialTheme.colorScheme.onBackground
 
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = onDismiss) { Text("Cancel", fontWeight = FontWeight.Bold, color = onBg) }
-        TextButton(onClick = onApply, enabled = hasChanges) {
-            Text(
-                "Apply",
-                fontWeight = FontWeight.Bold,
-                color = if (hasChanges) primary else onBg.copy(alpha = 0.38f)
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
+    ) {
+        OutlinedButton(
+            onClick = onDismiss,
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text("Cancel", fontWeight = FontWeight.Bold, color = onBg)
+        }
+        Button(
+            onClick = onApply,
+            enabled = hasChanges,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = primary,
+                contentColor = onPrimary,
+                disabledContainerColor = onBg.copy(alpha = 0.12f),
+                disabledContentColor = onBg.copy(alpha = 0.38f)
             )
+        ) {
+            Text("Apply", fontWeight = FontWeight.Bold)
         }
     }
+}
+
+@Composable
+private fun SectionCard(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+    )
 }
