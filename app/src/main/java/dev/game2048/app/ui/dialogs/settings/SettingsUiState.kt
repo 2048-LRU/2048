@@ -10,7 +10,8 @@ data class SettingsUiState(
     val isSoundEnabled: Boolean = true,
     val isAnimationEnabled: Boolean = true,
     val isAccelerometerEnabled: Boolean = false,
-    val currentTheme: Theme = Theme.SYSTEM
+    val currentTheme: Theme = Theme.SYSTEM,
+    val usesImage: Boolean = false
 )
 
 fun GameSettings.toUiState(): SettingsUiState = SettingsUiState(
@@ -18,7 +19,8 @@ fun GameSettings.toUiState(): SettingsUiState = SettingsUiState(
     isAnimationEnabled = isAnimationEnabled,
     isAccelerometerEnabled = isAccelerometerEnabled,
     currentTheme = currentTheme,
-    gridSize = gridSize
+    gridSize = gridSize,
+    usesImage = usesImage
 )
 
 fun SettingsUiState.toEntity(): GameSettings = GameSettings(
@@ -26,5 +28,6 @@ fun SettingsUiState.toEntity(): GameSettings = GameSettings(
     isAnimationEnabled = isAnimationEnabled,
     isAccelerometerEnabled = isAccelerometerEnabled,
     currentTheme = currentTheme,
-    gridSize = gridSize
+    gridSize = gridSize,
+    usesImage = usesImage
 )
