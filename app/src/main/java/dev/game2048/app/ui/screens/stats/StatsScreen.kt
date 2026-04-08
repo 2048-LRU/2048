@@ -167,6 +167,7 @@ private fun TopScoresCard(scores: List<Int>) {
 private fun ResetButton(onClick: () -> Unit) {
     val secondary = MaterialTheme.colorScheme.secondary
     val textSecondary = MaterialTheme.colorScheme.onSecondary
+
     Button(
         onClick = onClick,
         shape = MaterialTheme.shapes.small,

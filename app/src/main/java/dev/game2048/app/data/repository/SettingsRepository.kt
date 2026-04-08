@@ -9,14 +9,9 @@ import kotlinx.coroutines.flow.first
 
 @Singleton
 class SettingsRepository @Inject constructor(private val dataStore: SettingsDataStore) {
-
-    val gridSizeFlow: Flow<Int> = dataStore.gridSizeFlow
     val settingsFlow: Flow<GameSettings> = dataStore.gameSettingsFlow
 
-    suspend fun getGridSize(): Int = dataStore.gridSizeFlow.first()
     suspend fun getSettings(): GameSettings = dataStore.gameSettingsFlow.first()
-
-    suspend fun saveGridSize(size: Int) = dataStore.saveGridSize(size)
 
     suspend fun saveSettings(settings: GameSettings) = dataStore.saveSettings(settings)
 }

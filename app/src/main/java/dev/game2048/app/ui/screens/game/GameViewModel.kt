@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -172,7 +173,7 @@ class GameViewModel @Inject constructor(
     private fun loadOrStartGame() {
         viewModelScope.launch {
             statsRepository.load()
-            gridSize = settingsRepository.getGridSize()
+            gridSize = settingsRepository.getSettings().gridSize
             engine = GameEngine(size = gridSize)
 
             val saved = gameStateRepository.load()
@@ -197,7 +198,8 @@ class GameViewModel @Inject constructor(
     }
 
     private suspend fun observeSettings() {
-        settingsRepository.gridSizeFlow
+        settingsRepository.settingsFlow
+            .map { it.gridSize }
             .distinctUntilChanged()
             .collect { newSize ->
                 if (newSize != gridSize) {
@@ -259,7 +261,7 @@ class GameViewModel @Inject constructor(
 
         timerJob = viewModelScope.launch {
             while (true) {
-                delay(1000L)
+                delay(1000L.milliseconds)
                 if (_uiState.value.state == GameState.Playing) {
                     _uiState.update { it.copy(gameTime = it.gameTime + 1) }
                 }

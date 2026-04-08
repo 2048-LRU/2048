@@ -26,17 +26,14 @@ class SettingsDataStore(private val context: Context) {
         val CURRENT_THEME = stringPreferencesKey("theme_pref")
     }
 
-    val gridSizeFlow: Flow<Int> = context.settingsDataStore.data.map { prefs ->
-        prefs[Keys.GRID_SIZE] ?: GameConstants.GRID_SIZE
-    }
-
     val gameSettingsFlow: Flow<GameSettings> =
         context.settingsDataStore.data.map { prefs ->
             GameSettings(
                 isSoundEnabled = prefs[Keys.SOUND_ENABLED] ?: true,
                 currentTheme = Theme.valueOf(prefs[Keys.CURRENT_THEME] ?: Theme.SYSTEM.name),
                 isAccelerometerEnabled = prefs[Keys.SENSOR_ENABLED] ?: false,
-                isAnimationEnabled = prefs[Keys.ANIMATION_ENABLED] ?: true
+                isAnimationEnabled = prefs[Keys.ANIMATION_ENABLED] ?: true,
+                gridSize = prefs[Keys.GRID_SIZE] ?: GameConstants.GRID_SIZE
             )
         }
 
@@ -46,12 +43,7 @@ class SettingsDataStore(private val context: Context) {
             prefs[Keys.CURRENT_THEME] = settings.currentTheme.toString()
             prefs[Keys.ANIMATION_ENABLED] = settings.isAnimationEnabled
             prefs[Keys.SENSOR_ENABLED] = settings.isAccelerometerEnabled
-        }
-    }
-
-    suspend fun saveGridSize(size: Int) {
-        context.settingsDataStore.edit { prefs ->
-            prefs[Keys.GRID_SIZE] = size
+            prefs[Keys.GRID_SIZE] = settings.gridSize
         }
     }
 }

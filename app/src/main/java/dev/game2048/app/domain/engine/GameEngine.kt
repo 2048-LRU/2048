@@ -3,7 +3,6 @@ package dev.game2048.app.domain.engine
 import dev.game2048.app.domain.model.Direction
 import dev.game2048.app.domain.model.Tile
 import dev.game2048.app.utils.GameConstants
-import kotlin.collections.plusAssign
 import kotlin.random.Random
 
 class GameEngine(private val size: Int) {

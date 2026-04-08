@@ -1,7 +1,5 @@
 package dev.game2048.app.ui.screens.game
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,7 +58,6 @@ fun GameScreen(
     val settings by viewModel.settings.collectAsState()
 
     val context = LocalContext.current
-    val activity = context as Activity
     val graphicsLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
 
@@ -144,7 +142,6 @@ fun GameScreen(
             )
         }
     }
-    activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 }
 
 @Composable
@@ -166,13 +163,9 @@ private fun TopBarIcons(onSettingsClick: () -> Unit, onStatsClick: () -> Unit) {
 }
 
 @Composable
-private fun TopBarIcon(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    description: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun TopBarIcon(icon: ImageVector, description: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val iconColor = LocalGameColors.current.settings
+
     IconButton(
         onClick = onClick,
         modifier = modifier.size(40.dp),

@@ -53,7 +53,6 @@ fun Modifier.onSensorTilt(
                 }
             }
 
-            @Suppress("detekt:EmptyFunctionBlock")
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
             }
         }

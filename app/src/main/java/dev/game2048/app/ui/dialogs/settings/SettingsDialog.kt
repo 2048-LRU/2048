@@ -29,7 +29,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,12 +54,8 @@ private val GridSizeOptions = listOf(3, 4, 5, 6)
 fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: () -> Unit, onApply: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState.isLoading) return
-
-    var currentSettings by remember(uiState.settings) { mutableStateOf(uiState.settings) }
-    var selectedGridSize by remember(uiState.gridSize) { mutableIntStateOf(uiState.gridSize) }
-
-    val hasChanges = selectedGridSize != uiState.gridSize || currentSettings != uiState.settings
+    var currentSettings by remember(uiState.toEntity()) { mutableStateOf(uiState.toEntity()) }
+    val hasChanges = currentSettings.gridSize != uiState.gridSize || currentSettings != uiState.toEntity()
 
     Surface(
         shape = RoundedCornerShape(16.dp),
@@ -69,14 +64,12 @@ fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: ()
     ) {
         SettingsContent(
             settings = currentSettings,
-            selectedGridSize = selectedGridSize,
-            gridChanges = selectedGridSize != uiState.gridSize,
+            gridChanges = currentSettings.gridSize != uiState.gridSize,
             hasChanges = hasChanges,
             onSettingsChange = { currentSettings = it },
-            onGridSizeChange = { selectedGridSize = it },
             onDismiss = onDismiss,
             onApply = {
-                viewModel.applySettings(selectedGridSize, currentSettings) {
+                viewModel.applySettings(currentSettings) {
                     onApply()
                 }
             }
@@ -87,11 +80,9 @@ fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: ()
 @Composable
 private fun SettingsContent(
     settings: GameSettings,
-    selectedGridSize: Int,
     gridChanges: Boolean,
     hasChanges: Boolean,
     onSettingsChange: (GameSettings) -> Unit,
-    onGridSizeChange: (Int) -> Unit,
     onDismiss: () -> Unit,
     onApply: () -> Unit
 ) {
@@ -133,7 +124,10 @@ private fun SettingsContent(
 
         HorizontalDivider(color = GameTitle.copy(alpha = 0.2f))
 
-        GridSizeSection(selectedGridSize = selectedGridSize, onSelect = onGridSizeChange)
+        GridSizeSection(
+            selectedGridSize = settings.gridSize,
+            onSelect = { onSettingsChange(settings.copy(gridSize = it)) }
+        )
 
         if (gridChanges) {
             Text(
