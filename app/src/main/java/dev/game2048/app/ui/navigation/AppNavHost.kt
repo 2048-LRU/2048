@@ -13,7 +13,6 @@ import dev.game2048.app.ui.dialogs.settings.SettingsDialog
 import dev.game2048.app.ui.screens.game.GameScreen
 import dev.game2048.app.ui.screens.game.GameViewModel
 import dev.game2048.app.ui.screens.stats.StatsScreen
-import dev.game2048.app.ui.screens.stats.StatsViewModel
 
 @Composable
 fun AppNavHost(modifier: Modifier = Modifier) {
