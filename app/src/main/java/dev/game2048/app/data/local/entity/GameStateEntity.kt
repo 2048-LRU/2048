@@ -17,5 +17,6 @@ data class GameStateEntity(
     val history: List<HistoryState> = emptyList(),
     val undosRemaining: Int = GameConstants.MAX_UNDO,
     val moves: Int = 0,
-    val gameTime: Long = 0L
+    val gameTime: Long = 0L,
+    val isTutorialActive: Boolean = false
 )
