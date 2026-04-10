@@ -34,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import dev.game2048.app.R
 
 @Composable
 fun StatsScreen(modifier: Modifier = Modifier, onBack: () -> Unit, viewModel: StatsViewModel = hiltViewModel()) {
@@ -59,10 +61,10 @@ fun StatsScreen(modifier: Modifier = Modifier, onBack: () -> Unit, viewModel: St
                 modifier = Modifier.size(40.dp),
                 colors = IconButtonDefaults.iconButtonColors(contentColor = onBg)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", Modifier.size(26.dp))
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back), Modifier.size(26.dp))
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Statistics", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = onBg)
+            Text(stringResource(R.string.statistics), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = onBg)
         }
 
         HighlightRow(bestScore = uiState.bestScore, topTile = uiState.topTile)
@@ -80,13 +82,13 @@ private fun HighlightRow(bestScore: Int, topTile: Int) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         HighlightCard(
             icon = Icons.Filled.EmojiEvents,
-            label = "Best score",
+            label = stringResource(R.string.best_score_label),
             value = formatStat(bestScore),
             modifier = Modifier.weight(1f)
         )
         HighlightCard(
             icon = Icons.Filled.Star,
-            label = "Top tile",
+            label = stringResource(R.string.top_tile_label),
             value = formatStat(topTile),
             modifier = Modifier.weight(1f)
         )
@@ -115,13 +117,13 @@ private fun HighlightCard(icon: ImageVector, label: String, value: String, modif
 @Composable
 private fun GameDetailsCard(stats: StatsUiState) {
     SectionCard {
-        SectionTitle("Game details")
+        SectionTitle(stringResource(R.string.game_details_section))
         Spacer(modifier = Modifier.height(12.dp))
-        StatRow(label = "Games played", value = formatStat(stats.gamesPlayed))
+        StatRow(label = stringResource(R.string.games_played), value = formatStat(stats.gamesPlayed))
         StatDivider()
-        StatRow(label = "Wins", value = formatStat(stats.wins))
+        StatRow(label = stringResource(R.string.wins), value = formatStat(stats.wins))
         StatDivider()
-        StatRow(label = "Losses", value = formatStat(stats.losses))
+        StatRow(label = stringResource(R.string.losses), value = formatStat(stats.losses))
     }
 }
 
@@ -130,7 +132,7 @@ private fun TopScoresCard(scores: List<Int>) {
     if (scores.isEmpty()) return
 
     SectionCard {
-        SectionTitle("Top scores")
+        SectionTitle(stringResource(R.string.top_scores_section))
         Spacer(modifier = Modifier.height(12.dp))
         scores.forEachIndexed { index, score ->
             if (index > 0) StatDivider()
@@ -156,7 +158,7 @@ private fun ResetButton(onClick: () -> Unit) {
         ) {
             Icon(Icons.Default.DeleteForever, null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Reset Stats", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.reset_stats), fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

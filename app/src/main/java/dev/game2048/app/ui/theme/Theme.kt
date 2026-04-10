@@ -1,5 +1,6 @@
 package dev.game2048.app.ui.theme
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -11,6 +12,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import dev.game2048.app.R
 
 enum class Theme {
     SYSTEM,
@@ -56,14 +59,14 @@ private val WaterColorScheme = darkColorScheme(
     onError = Color.White
 )
 
-fun getThemeData(theme: Theme) = when (theme) {
+fun getThemeData(theme: Theme): Triple<@StringRes Int, List<ImageVector>, List<Color>> = when (theme) {
     Theme.SYSTEM -> Triple(
-        "Auto",
+        R.string.theme_auto,
         listOf(Icons.Default.LightMode, Icons.Default.DarkMode),
         listOf(Color(0xFFE5A000), Color(0xFF6A5ACD))
     )
 
-    Theme.WATER -> Triple("Water", listOf(Icons.Default.WaterDrop), listOf(Color(0xFF1BA3DE)))
+    Theme.WATER -> Triple(R.string.theme_water, listOf(Icons.Default.WaterDrop), listOf(Color(0xFF1BA3DE)))
 }
 
 @Composable

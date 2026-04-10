@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
+import dev.game2048.app.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -23,8 +24,8 @@ fun shareGameScore(context: Context, bitmap: Bitmap, score: Int) {
         ShareCompat.IntentBuilder(context)
             .setType("image/png")
             .setStream(uri)
-            .setText("I've obtained a score of %,d".format(score))
-            .setChooserTitle("Share with...")
+            .setText(context.getString(R.string.share_score_text, "%,d".format(score)))
+            .setChooserTitle(context.getString(R.string.share_chooser_title))
             .startChooser()
     } catch (e: IllegalArgumentException) {
         Log.d("ShareScore", "image file not found, $e")

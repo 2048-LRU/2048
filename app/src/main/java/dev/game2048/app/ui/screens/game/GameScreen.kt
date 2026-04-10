@@ -32,12 +32,14 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import dev.game2048.app.R
 import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameHeader
@@ -157,19 +159,19 @@ private fun TopBarIcons(onSettingsClick: () -> Unit, onStatsClick: () -> Unit, o
     Box(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
         TopBarIcon(
             icon = Icons.Default.Settings,
-            description = "Settings",
+            description = stringResource(R.string.settings_icon_description),
             onClick = onSettingsClick,
             modifier = Modifier.align(Alignment.TopStart)
         )
         Row(modifier = Modifier.align(Alignment.TopEnd)) {
             TopBarIcon(
                 icon = Icons.AutoMirrored.Filled.HelpOutline,
-                description = "Tutorial",
+                description = stringResource(R.string.tutorial_icon_description),
                 onClick = onHelpClick
             )
             TopBarIcon(
                 icon = Icons.Default.BarChart,
-                description = "Statistics",
+                description = stringResource(R.string.statistics_icon_description),
                 onClick = onStatsClick
             )
         }
