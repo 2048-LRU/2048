@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">2048</string>
+
+    <!-- GameHeader -->
+    <string name="score_label">SCORE</string>
+    <string name="best_label">MEILLEUR</string>
+    <string name="new_game_button">NOUVEAU</string>
+    <string name="undo_button">ANNULER</string>
+
+    <!-- GameOverlay -->
+    <string name="you_win">VOUS GAGNEZ !</string>
+    <string name="game_over">JEU TERMINÉ</string>
+    <string name="game_results">Résultats</string>
+    <string name="all_time_best">Meilleur score</string>
+    <string name="score_recap_label">Score</string>
+    <string name="best_tile">Meilleure tuile</string>
+    <string name="moves">Mouvements</string>
+    <string name="continue_for">Continuer jusqu\'à %1$d</string>
+    <string name="share_board">Partager</string>
+    <string name="new_game">Nouvelle partie</string>
+    <string name="start_playing">Jouer</string>
+
+    <!-- TutorialOverlay -->
+    <string name="tutorial_swipe_horizontal">Glissez pour fusionner les tuiles de même valeur</string>
+    <string name="tutorial_swipe_vertical">Essayez maintenant de glisser verticalement</string>
+    <string name="tutorial_completed">Bravo !\nVisons maintenant le 2048.</string>
+    <string name="swipe_indicator">Indicateur de glissement</string>
+
+    <!-- GameScreen content descriptions -->
+    <string name="settings_icon_description">Paramètres</string>
+    <string name="tutorial_icon_description">Tutoriel</string>
+    <string name="statistics_icon_description">Statistiques</string>
+
+    <!-- StatsScreen -->
+    <string name="back">Retour</string>
+    <string name="statistics">Statistiques</string>
+    <string name="best_score_label">Meilleur score</string>
+    <string name="top_tile_label">Meilleure tuile</string>
+    <string name="game_details_section">Détails de la partie</string>
+    <string name="games_played">Parties jouées</string>
+    <string name="wins">Victoires</string>
+    <string name="losses">Défaites</string>
+    <string name="top_scores_section">Meilleurs scores</string>
+    <string name="reset_stats">Réinitialiser</string>
+
+    <!-- SettingsDialog -->
+    <string name="settings_title">Paramètres</string>
+    <string name="music_label">Musique</string>
+    <string name="animation_label">Animation</string>
+    <string name="motion_label">Mouvement</string>
+    <string name="images_label">Images</string>
+    <string name="theme_section">Thème</string>
+    <string name="grid_size_section">Taille de la grille</string>
+    <string name="grid_size_warning">⚠ Changer la taille redémarrera la partie.</string>
+    <string name="cancel">Annuler</string>
+    <string name="apply">Appliquer</string>
+
+    <!-- ShareScore -->
+    <string name="share_score_text">J\'ai obtenu un score de %1$s</string>
+    <string name="share_chooser_title">Partager avec…</string>
+
+    <!-- Theme names -->
+    <string name="theme_auto">Auto</string>
+    <string name="theme_water">Eau</string>
+</resources>

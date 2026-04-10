@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">2048</string>
+
+    <!-- GameHeader -->
+    <string name="score_label">PUNTOS</string>
+    <string name="best_label">RÉCORD</string>
+    <string name="new_game_button">NUEVO</string>
+    <string name="undo_button">DESHACER</string>
+
+    <!-- GameOverlay -->
+    <string name="you_win">¡GANASTE!</string>
+    <string name="game_over">FIN DEL JUEGO</string>
+    <string name="game_results">Resultados</string>
+    <string name="all_time_best">Mejor puntuación</string>
+    <string name="score_recap_label">Puntos</string>
+    <string name="best_tile">Mejor ficha</string>
+    <string name="moves">Movimientos</string>
+    <string name="continue_for">Continuar hasta %1$d</string>
+    <string name="share_board">Compartir</string>
+    <string name="new_game">Nueva partida</string>
+    <string name="start_playing">Empezar</string>
+
+    <!-- TutorialOverlay -->
+    <string name="tutorial_swipe_horizontal">Desliza para unir fichas del mismo valor</string>
+    <string name="tutorial_swipe_vertical">Ahora intenta deslizar verticalmente</string>
+    <string name="tutorial_completed">¡Genial!\nAhora vamos a por el 2048.</string>
+    <string name="swipe_indicator">Indicador de deslizamiento</string>
+
+    <!-- GameScreen content descriptions -->
+    <string name="settings_icon_description">Ajustes</string>
+    <string name="tutorial_icon_description">Tutorial</string>
+    <string name="statistics_icon_description">Estadísticas</string>
+
+    <!-- StatsScreen -->
+    <string name="back">Atrás</string>
+    <string name="statistics">Estadísticas</string>
+    <string name="best_score_label">Mejor puntuación</string>
+    <string name="top_tile_label">Mejor ficha</string>
+    <string name="game_details_section">Detalles del juego</string>
+    <string name="games_played">Partidas jugadas</string>
+    <string name="wins">Victorias</string>
+    <string name="losses">Derrotas</string>
+    <string name="top_scores_section">Mejores puntuaciones</string>
+    <string name="reset_stats">Reiniciar estadísticas</string>
+
+    <!-- SettingsDialog -->
+    <string name="settings_title">Ajustes</string>
+    <string name="music_label">Música</string>
+    <string name="animation_label">Animación</string>
+    <string name="motion_label">Movimiento</string>
+    <string name="images_label">Imágenes</string>
+    <string name="theme_section">Tema</string>
+    <string name="grid_size_section">Tamaño de cuadrícula</string>
+    <string name="grid_size_warning">⚠ Cambiar el tamaño reiniciará la partida.</string>
+    <string name="cancel">Cancelar</string>
+    <string name="apply">Aplicar</string>
+
+    <!-- ShareScore -->
+    <string name="share_score_text">He obtenido una puntuación de %1$s</string>
+    <string name="share_chooser_title">Compartir con…</string>
+
+    <!-- Theme names -->
+    <string name="theme_auto">Auto</string>
+    <string name="theme_water">Agua</string>
+</resources>
