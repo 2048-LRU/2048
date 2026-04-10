@@ -42,8 +42,10 @@ fun TutorialOverlay(moves: Int, onDismiss: () -> Unit) {
     val initialMoves = remember { moves }
     val tutorialStep = moves - initialMoves
 
-    LaunchedEffect(tutorialStep) {
-        if (tutorialStep >= 2) {
+    val isCompleted = tutorialStep >= 2
+
+    LaunchedEffect(isCompleted) {
+        if (isCompleted) {
             delay(1500)
             onDismiss()
         }
