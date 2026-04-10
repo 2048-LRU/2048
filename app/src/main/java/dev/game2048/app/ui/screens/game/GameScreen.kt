@@ -3,11 +3,13 @@ package dev.game2048.app.ui.screens.game
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -40,6 +42,7 @@ import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.components.GameGrid
 import dev.game2048.app.ui.components.GameHeader
 import dev.game2048.app.ui.components.GameOverlay
+import dev.game2048.app.ui.components.TutorialOverlay
 import dev.game2048.app.ui.theme.GameTitle
 import dev.game2048.app.ui.theme.LocalGameColors
 import dev.game2048.app.utils.formatGameTime
@@ -77,9 +80,7 @@ fun GameScreen(
         }
         lifecycleOwner.lifecycle.addObserver(observer)
 
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -124,7 +125,8 @@ fun GameScreen(
         if (uiState.state != GameState.Over) {
             TopBarIcons(
                 onSettingsClick = onNavigateToSettings,
-                onStatsClick = onNavigateToStats
+                onStatsClick = onNavigateToStats,
+                onHelpClick = viewModel::startTutorial
             )
         }
 
@@ -143,11 +145,15 @@ fun GameScreen(
                 onContinue = viewModel::continueGame
             )
         }
+
+        if (uiState.isTutorialActive) {
+            TutorialOverlay(moves = uiState.moves, onDismiss = viewModel::dismissTutorial)
+        }
     }
 }
 
 @Composable
-private fun TopBarIcons(onSettingsClick: () -> Unit, onStatsClick: () -> Unit) {
+private fun TopBarIcons(onSettingsClick: () -> Unit, onStatsClick: () -> Unit, onHelpClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
         TopBarIcon(
             icon = Icons.Default.Settings,
@@ -155,12 +161,18 @@ private fun TopBarIcons(onSettingsClick: () -> Unit, onStatsClick: () -> Unit) {
             onClick = onSettingsClick,
             modifier = Modifier.align(Alignment.TopStart)
         )
-        TopBarIcon(
-            icon = Icons.Default.BarChart,
-            description = "Statistics",
-            onClick = onStatsClick,
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
+        Row(modifier = Modifier.align(Alignment.TopEnd)) {
+            TopBarIcon(
+                icon = Icons.AutoMirrored.Filled.HelpOutline,
+                description = "Tutorial",
+                onClick = onHelpClick
+            )
+            TopBarIcon(
+                icon = Icons.Default.BarChart,
+                description = "Statistics",
+                onClick = onStatsClick
+            )
+        }
     }
 }
 
@@ -173,6 +185,11 @@ private fun TopBarIcon(icon: ImageVector, description: String, onClick: () -> Un
         modifier = modifier.size(40.dp),
         colors = IconButtonDefaults.iconButtonColors(contentColor = GameTitle)
     ) {
-        Icon(imageVector = icon, contentDescription = description, modifier = Modifier.size(28.dp), tint = iconColor)
+        Icon(
+            imageVector = icon,
+            contentDescription = description,
+            modifier = Modifier.size(28.dp),
+            tint = iconColor
+        )
     }
 }

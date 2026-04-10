@@ -15,7 +15,8 @@ data class GameUiState(
     val undosRemaining: Int = GameConstants.MAX_UNDO,
     val isMoving: Boolean = false,
     var moves: Int = 0,
-    val gameTime: Long = 0L
+    val gameTime: Long = 0L,
+    val isTutorialActive: Boolean = false
 ) {
     val currentTopTile: Int
         get() = board.maxOf { row ->

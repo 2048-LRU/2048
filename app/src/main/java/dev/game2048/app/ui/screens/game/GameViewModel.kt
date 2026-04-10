@@ -182,6 +182,7 @@ class GameViewModel @Inject constructor(
                 saved.board.size == gridSize
 
             val bestScore = statsRepository.stats.value.bestScore
+            val shouldShowTutorial = statsRepository.stats.value.gamesPlayed == 0
 
             if (canRestore) {
                 engine.restore(saved.board, saved.score, saved.winTarget)
@@ -191,6 +192,7 @@ class GameViewModel @Inject constructor(
             } else {
                 _uiState.update { it.copy(bestScore = bestScore) }
                 restart()
+                _uiState.update { it.copy(isTutorialActive = shouldShowTutorial) }
             }
 
             observeSettings()
@@ -271,6 +273,14 @@ class GameViewModel @Inject constructor(
 
     fun pauseTimer() {
         timerJob?.cancel()
+    }
+
+    fun startTutorial() {
+        _uiState.update { it.copy(isTutorialActive = true) }
+    }
+
+    fun dismissTutorial() {
+        _uiState.update { it.copy(isTutorialActive = false) }
     }
 
     override fun onCleared() {
