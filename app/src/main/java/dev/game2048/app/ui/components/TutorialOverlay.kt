@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.game2048.app.R
 import dev.game2048.app.ui.theme.LocalGameColors
 import kotlinx.coroutines.delay
 
@@ -82,21 +84,21 @@ fun TutorialOverlay(moves: Int, onDismiss: () -> Unit) {
         when (tutorialStep) {
             0 -> TutorialInstruction(
                 icon = Icons.Default.SwapHoriz,
-                text = "Swipe to merge the tiles with the same value",
+                text = stringResource(R.string.tutorial_swipe_horizontal),
                 alpha = alpha,
                 offsetX = offsetAnimation.dp
             )
 
             1 -> TutorialInstruction(
                 icon = Icons.Default.SwapVert,
-                text = "Now try swiping vertically",
+                text = stringResource(R.string.tutorial_swipe_vertical),
                 alpha = alpha,
                 offsetY = offsetAnimation.dp
             )
 
             else -> {
                 Text(
-                    text = "Great!\nNow let's go for 2048.",
+                    text = stringResource(R.string.tutorial_completed),
                     color = gameColors.settings,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
@@ -116,7 +118,7 @@ private fun TutorialInstruction(icon: ImageVector, text: String, alpha: Float, o
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = "Swipe indicator",
+            contentDescription = stringResource(R.string.swipe_indicator),
             tint = Color.White.copy(alpha = alpha),
             modifier = Modifier
                 .size(80.dp)

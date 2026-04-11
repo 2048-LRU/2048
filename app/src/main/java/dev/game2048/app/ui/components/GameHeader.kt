@@ -18,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.game2048.app.R
 import dev.game2048.app.ui.theme.Game2048Theme
 import dev.game2048.app.ui.theme.HeaderButtons
 import dev.game2048.app.ui.theme.ScoreText
@@ -67,8 +69,8 @@ private fun ScoreRow(score: Int, bestScore: Int) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ScoreBox("SCORE", score, Modifier.weight(1f))
-        ScoreBox("BEST", bestScore, Modifier.weight(1f))
+        ScoreBox(stringResource(R.string.score_label), score, Modifier.weight(1f))
+        ScoreBox(stringResource(R.string.best_label), bestScore, Modifier.weight(1f))
     }
 }
 
@@ -104,9 +106,9 @@ private fun ActionRow(undosRemaining: Int, onRestart: () -> Unit, onUndo: () -> 
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        HeaderButton("NEW", onRestart, Modifier.weight(1f))
+        HeaderButton(stringResource(R.string.new_game_button), onRestart, Modifier.weight(1f))
         HeaderButton(
-            text = "UNDO",
+            text = stringResource(R.string.undo_button),
             onClick = onUndo,
             modifier = Modifier.weight(1f),
             enabled = undosRemaining > 0

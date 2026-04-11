@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.game2048.app.R
 import dev.game2048.app.domain.model.GameState
 import dev.game2048.app.ui.screens.game.GameUiState
 import dev.game2048.app.ui.theme.Game2048Theme
@@ -88,7 +90,7 @@ private fun overlayBackground(isWin: Boolean, showRecap: Boolean): Color {
 @Composable
 private fun OverlayTitle(isWin: Boolean, modifier: Modifier = Modifier) {
     Text(
-        text = if (isWin) "YOU WIN!" else "GAME OVER",
+        text = if (isWin) stringResource(R.string.you_win) else stringResource(R.string.game_over),
         color = if (isWin) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground,
         fontSize = 48.sp,
         fontWeight = FontWeight.ExtraBold,
@@ -109,7 +111,7 @@ private fun RecapCard(score: Int, bestScore: Int, moves: Int, topTile: Int, modi
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
-            text = "Game Results",
+            text = stringResource(R.string.game_results),
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             color = onSurface.copy(alpha = 0.6f),
@@ -118,10 +120,10 @@ private fun RecapCard(score: Int, bestScore: Int, moves: Int, topTile: Int, modi
 
         HorizontalDivider(color = onSurface.copy(alpha = 0.1f))
 
-        RecapRow(label = "All time best", value = formatStat(bestScore), highlight = true)
-        RecapRow(label = "Score", value = formatStat(score))
-        RecapRow(label = "Best Tile", value = formatStat(topTile))
-        RecapRow(label = "Moves", value = formatStat(moves))
+        RecapRow(label = stringResource(R.string.all_time_best), value = formatStat(bestScore), highlight = true)
+        RecapRow(label = stringResource(R.string.score_recap_label), value = formatStat(score))
+        RecapRow(label = stringResource(R.string.best_tile), value = formatStat(topTile))
+        RecapRow(label = stringResource(R.string.moves), value = formatStat(moves))
     }
 }
 
@@ -163,7 +165,7 @@ private fun OverlayActions(
         when {
             isWin -> {
                 OverlayButton(
-                    text = "Continue for $winValue",
+                    text = stringResource(R.string.continue_for, winValue),
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     onClick = onContinue
@@ -172,13 +174,13 @@ private fun OverlayActions(
 
             !showRecap -> {
                 OverlayButton(
-                    text = "Share Board",
+                    text = stringResource(R.string.share_board),
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
                     onClick = onShareGrid
                 )
                 OverlayButton(
-                    text = "New Game",
+                    text = stringResource(R.string.new_game),
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     onClick = onRequestRecap
@@ -187,7 +189,7 @@ private fun OverlayActions(
 
             else -> {
                 OverlayButton(
-                    text = "Start Playing",
+                    text = stringResource(R.string.start_playing),
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     onClick = onRestart

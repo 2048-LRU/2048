@@ -43,11 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import dev.game2048.app.R
 import dev.game2048.app.domain.model.GameSettings
 import dev.game2048.app.ui.theme.Theme
 import dev.game2048.app.ui.theme.getThemeData
@@ -74,7 +76,7 @@ fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: ()
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                "Settings",
+                stringResource(R.string.settings_title),
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 color = MaterialTheme.colorScheme.onBackground
@@ -109,7 +111,7 @@ fun SettingsDialog(viewModel: SettingsViewModel = hiltViewModel(), onDismiss: ()
 private fun ToggleSection(settings: GameSettings, onSettingsChange: (GameSettings) -> Unit) {
     SectionCard {
         ToggleRow(
-            label = "Music",
+            label = stringResource(R.string.music_label),
             icon = if (settings.isMusicEnabled) {
                 Icons.AutoMirrored.Filled.VolumeUp
             } else {
@@ -119,19 +121,19 @@ private fun ToggleSection(settings: GameSettings, onSettingsChange: (GameSetting
             onCheckedChange = { onSettingsChange(settings.copy(isMusicEnabled = it)) }
         )
         ToggleRow(
-            label = "Animation",
+            label = stringResource(R.string.animation_label),
             icon = Icons.Filled.Animation,
             checked = settings.isAnimationEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isAnimationEnabled = it)) }
         )
         ToggleRow(
-            label = "Motion",
+            label = stringResource(R.string.motion_label),
             icon = Icons.Filled.ScreenRotation,
             checked = settings.isAccelerometerEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isAccelerometerEnabled = it)) }
         )
         ToggleRow(
-            label = "Images",
+            label = stringResource(R.string.images_label),
             icon = Icons.Filled.Image,
             checked = settings.isImageEnabled,
             onCheckedChange = { onSettingsChange(settings.copy(isImageEnabled = it)) }
@@ -167,17 +169,17 @@ private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onChec
 @Composable
 private fun ThemeSection(currentTheme: Theme, onThemeChanged: (Theme) -> Unit) {
     SectionCard {
-        SectionTitle("Theme")
+        SectionTitle(stringResource(R.string.theme_section))
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             Theme.entries.forEach { theme ->
-                val (label, icons, colors) = getThemeData(theme)
+                val (labelRes, icons, colors) = getThemeData(theme)
                 val isSelected = currentTheme == theme
 
                 ThemeChip(
                     isSelected = isSelected,
                     icons = icons,
-                    label = label,
+                    label = stringResource(labelRes),
                     colors = colors,
                     onClick = { onThemeChanged(theme) }
                 )
@@ -238,7 +240,7 @@ private fun GridSizeSection(selectedGridSize: Int, gridChanged: Boolean, onSelec
     val onPrimary = MaterialTheme.colorScheme.onPrimary
 
     SectionCard {
-        SectionTitle("Grid size")
+        SectionTitle(stringResource(R.string.grid_size_section))
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             GridSizeOptions.forEach { size ->
@@ -266,7 +268,7 @@ private fun GridSizeSection(selectedGridSize: Int, gridChanged: Boolean, onSelec
         if (gridChanged) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "⚠ Changing the size will restart the game.",
+                stringResource(R.string.grid_size_warning),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Medium
@@ -289,7 +291,7 @@ private fun ButtonRow(hasChanges: Boolean, onDismiss: () -> Unit, onApply: () ->
             onClick = onDismiss,
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Cancel", fontWeight = FontWeight.Bold, color = onBg)
+            Text(stringResource(R.string.cancel), fontWeight = FontWeight.Bold, color = onBg)
         }
         Button(
             onClick = onApply,
@@ -302,7 +304,7 @@ private fun ButtonRow(hasChanges: Boolean, onDismiss: () -> Unit, onApply: () ->
                 disabledContentColor = onBg.copy(alpha = 0.38f)
             )
         ) {
-            Text("Apply", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.apply), fontWeight = FontWeight.Bold)
         }
     }
 }
